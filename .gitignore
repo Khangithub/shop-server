@@ -1,0 +1,4 @@
+node_modules
+uploads
+nodemon.json
+yarn.lock
