@@ -1,8 +1,9 @@
 const express = require ('express');
 const router = express.Router ();
 const {
-  getAllProduct,
-  getSaleOffProducts,
+  getProducts,
+  getMostDiscountsProducts,
+  getBestSaleProducts,
   createProduct,
   getProduct,
   updateProduct,
@@ -11,11 +12,15 @@ const {
 
 const {auth} = require ('../middlewares/user');
 
-router.get ('/', getAllProduct);
-router.get ('/saleOff/:pageIndex', getSaleOffProducts);
-router.post ('/', auth, createProduct);
+router.get ('/', getProducts);
 router.get ('/:productId', getProduct);
+router.get ('/most/discounts/:pageIndex/:limit', getMostDiscountsProducts);
+router.get ('/best/sale/:pageIndex/:limit', getBestSaleProducts);
+
+router.post ('/', auth, createProduct);
+
 router.patch ('/:productId', auth, updateProduct);
+
 router.delete ('/:productId', auth, deleteProduct);
 
 module.exports = router;

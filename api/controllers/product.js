@@ -1,8 +1,7 @@
 const mongoose = require ('mongoose');
 const Product = require ('../models/product');
-const limit = 6;
 
-const getAllProduct = async (_, res) => {
+const getProducts = async (_, res) => {
   try {
     const productList = await Product.find ()
       // .select (
@@ -99,14 +98,42 @@ const deleteProduct = async (req, res) => {
     });
 };
 
-const getSaleOffProducts = async (req, res) => {
+const getMostDiscountsProducts = async (req, res) => {
   try {
-    const pageIndex = req.params.pageIndex ? req.params.pageIndex : 1;
+    const pageIndex = req.params.pageIndex
+      ? parseInt (req.params.pageIndex)
+      : 1;
+    const limit = req.params.limit ? parseInt (req.params.limit) : 6;
+
     const skip = (pageIndex - 1) * limit;
 
     const discountList = await Product.find ({discount: {$gt: 0}})
       .skip (skip)
       .limit (limit)
+      .sort ({discount: -1})
+      .exec ();
+
+    return res.status (200).json ({
+      discountList,
+    });
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
+};
+
+const getBestSaleProducts = async (req, res) => {
+  try {
+    const pageIndex = req.params.pageIndex
+      ? parseInt (req.params.pageIndex)
+      : 1;
+    const limit = req.params.limit ? parseInt (req.params.limit) : 6;
+
+    const skip = (pageIndex - 1) * limit;
+
+    const discountList = await Product.find ({sold: {$gt: 0}})
+      .skip (skip)
+      .limit (limit)
+      .sort ({sold: -1})
       .exec ();
 
     return res.status (200).json ({
@@ -118,8 +145,9 @@ const getSaleOffProducts = async (req, res) => {
 };
 
 module.exports = {
-  getAllProduct,
-  getSaleOffProducts,
+  getProducts,
+  getMostDiscountsProducts,
+  getBestSaleProducts,
   createProduct,
   getProduct,
   updateProduct,
