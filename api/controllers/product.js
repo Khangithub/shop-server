@@ -1,5 +1,7 @@
 const mongoose = require ('mongoose');
 const Product = require ('../models/product');
+const LIMIT = 6;
+const PAGE_INDEX = 1;
 
 const getProducts = async (_, res) => {
   try {
@@ -102,8 +104,8 @@ const getMostDiscountsProducts = async (req, res) => {
   try {
     const pageIndex = req.params.pageIndex
       ? parseInt (req.params.pageIndex)
-      : 1;
-    const limit = req.params.limit ? parseInt (req.params.limit) : 6;
+      : PAGE_INDEX;
+    const limit = req.params.limit ? parseInt (req.params.limit) : LIMIT;
 
     const skip = (pageIndex - 1) * limit;
 
@@ -125,8 +127,8 @@ const getBestSaleProducts = async (req, res) => {
   try {
     const pageIndex = req.params.pageIndex
       ? parseInt (req.params.pageIndex)
-      : 1;
-    const limit = req.params.limit ? parseInt (req.params.limit) : 6;
+      : PAGE_INDEX;
+    const limit = req.params.limit ? parseInt (req.params.limit) : LIMIT;
 
     const skip = (pageIndex - 1) * limit;
 
