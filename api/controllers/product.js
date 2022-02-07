@@ -109,14 +109,14 @@ const getMostDiscountsProducts = async (req, res) => {
 
     const skip = (pageIndex - 1) * limit;
 
-    const bestSaleList = await Product.find ({discount: {$gt: 0}})
+    const discountList = await Product.find ({discount: {$gt: 0}})
       .skip (skip)
       .limit (limit)
       .sort ({discount: -1})
       .exec ();
 
     return res.status (200).json ({
-      bestSaleList,
+      discountList,
     });
   } catch (err) {
     return res.status (500).json ({err});
@@ -132,7 +132,7 @@ const getBestSaleProducts = async (req, res) => {
 
     const skip = (pageIndex - 1) * limit;
 
-    const discountList = await Product.find ({sold: {$gt: 0}})
+    const bestSaleList = await Product.find ({sold: {$gt: 0}})
       .skip (skip)
       .limit (limit)
       .sort ({sold: -1})
