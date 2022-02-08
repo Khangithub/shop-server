@@ -34,6 +34,7 @@ const createProduct = (req, res) => {
     rating: getIntInRange (1, 5),
     inStock: getIntInRange (500, 10000),
     sold: getIntInRange (150, 3000),
+    createAt: new Date (),
   });
 
   newProduct
@@ -153,5 +154,5 @@ module.exports = {
   createProduct,
   getProduct,
   updateProduct,
-  deleteProduct,
+  deleteProduct
 };

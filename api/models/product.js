@@ -65,6 +65,10 @@ const productSchema = mongoose.Schema ({
       message: 'inStock is not an integer value',
     },
   },
+  createAt: {
+    type: Date,
+    required: true
+  }
 });
 
 const Product = mongoose.model ('Product', productSchema);
