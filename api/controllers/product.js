@@ -110,7 +110,7 @@ const getMostDiscountsProducts = async (req, res) => {
 
     const skip = (pageIndex - 1) * limit;
 
-    const discountList = await Product.find ({discount: {$gt: 0}})
+    const discountList = await Product.find ()
       .skip (skip)
       .limit (limit)
       .sort ({discount: -1})
@@ -133,7 +133,7 @@ const getBestSaleProducts = async (req, res) => {
 
     const skip = (pageIndex - 1) * limit;
 
-    const bestSaleList = await Product.find ({sold: {$gt: 0}})
+    const bestSaleList = await Product.find ()
       .skip (skip)
       .limit (limit)
       .sort ({sold: -1})
@@ -147,12 +147,30 @@ const getBestSaleProducts = async (req, res) => {
   }
 };
 
+const getNewArrivalProducts = async (req, res) => {
+  try {
+    const pageIndex = req.params.pageIndex ? parseInt(req.params.pageIndex) : PAGE_INDEX;
+    const limit = req.params.limit ? parseInt(req.params.limit) : LIMIT;
+
+    const skip = (pageIndex - 1) * limit;
+
+    const newArrivalList = await Product.find().skip(skip).limit(limit).sort({createAt: -1}).exec();
+
+    return res.status(200).json({
+      newArrivalList,
+    })
+  } catch (err) {
+    
+  }
+}
+
 module.exports = {
   getProducts,
   getMostDiscountsProducts,
   getBestSaleProducts,
-  createProduct,
+  getNewArrivalProducts,
   getProduct,
+  createProduct,
   updateProduct,
   deleteProduct
 };

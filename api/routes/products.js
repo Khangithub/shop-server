@@ -7,7 +7,8 @@ const {
   createProduct,
   getProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getNewArrivalProducts
 } = require ('../controllers/product');
 
 const {auth} = require ('../middlewares/user');
@@ -16,7 +17,7 @@ router.get ('/', getProducts);
 router.get ('/:productId', getProduct);
 router.get ('/most/discounts/:pageIndex/:limit', getMostDiscountsProducts);
 router.get ('/best/sale/:pageIndex/:limit', getBestSaleProducts);
-
+router.get('/new/arrival/:pageIndex/:limit', getNewArrivalProducts);
 router.post ('/', auth, createProduct);
 
 router.patch ('/:productId', auth, updateProduct);
