@@ -19,6 +19,12 @@ const orderSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     require: true
+  },
+  orderStatus: {
+    type: String,
+    require: true,
+    enum: ['in-cart', 'shipping', 'shipped'],
+    default: 'in-cart'
   }
 })
 
