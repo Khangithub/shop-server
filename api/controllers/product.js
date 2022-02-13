@@ -3,18 +3,24 @@ const Product = require ('../models/product');
 const LIMIT = 6;
 const PAGE_INDEX = 1;
 
-const getProducts = async (_, res) => {
+const getProducts = async (req, res) => {
   try {
-    const productList = await Product.find ()
+    const pageIndex = req.params.pageIndex
+      ? parseInt (req.params.pageIndex)
+      : PAGE_INDEX;
+    const limit = req.params.limit ? parseInt (req.params.limit) : LIMIT;
+    const skip = (pageIndex - 1) * limit;
+
+    const docs = await Product.find ()
       // .select (
       //   '_id name price productImage category discount saler manufacturer'
       // )
       .populate ('saler')
+      .skip (skip)
+      .limit (limit)
       .exec ();
 
-    return res
-      .status (200)
-      .json ({docs: productList, message: 'get all products'});
+    return res.status (200).json ({docs});
   } catch (err) {
     return res.status (500).json ({
       err,
@@ -149,20 +155,24 @@ const getBestSaleProducts = async (req, res) => {
 
 const getNewArrivalProducts = async (req, res) => {
   try {
-    const pageIndex = req.params.pageIndex ? parseInt(req.params.pageIndex) : PAGE_INDEX;
-    const limit = req.params.limit ? parseInt(req.params.limit) : LIMIT;
+    const pageIndex = req.params.pageIndex
+      ? parseInt (req.params.pageIndex)
+      : PAGE_INDEX;
+    const limit = req.params.limit ? parseInt (req.params.limit) : LIMIT;
 
     const skip = (pageIndex - 1) * limit;
 
-    const newArrivalList = await Product.find().skip(skip).limit(limit).sort({createAt: -1}).exec();
+    const newArrivalList = await Product.find ()
+      .skip (skip)
+      .limit (limit)
+      .sort ({createAt: -1})
+      .exec ();
 
-    return res.status(200).json({
+    return res.status (200).json ({
       newArrivalList,
-    })
-  } catch (err) {
-    
-  }
-}
+    });
+  } catch (err) {}
+};
 
 module.exports = {
   getProducts,
@@ -172,5 +182,5 @@ module.exports = {
   getProduct,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };

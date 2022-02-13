@@ -13,7 +13,7 @@ const {
 
 const {auth} = require ('../middlewares/user');
 
-router.get ('/', getProducts);
+router.get ('/:pageIndex/:limit', getProducts);
 router.get ('/:productId', getProduct);
 router.get ('/most/discounts/:pageIndex/:limit', getMostDiscountsProducts);
 router.get ('/best/sale/:pageIndex/:limit', getBestSaleProducts);
