@@ -28,6 +28,29 @@ const getProducts = async (req, res) => {
   }
 };
 
+const getProductsByCategory = async (req, res) => {
+  try {
+    const {category} = req.params;
+    const pageIndex = req.params.pageIndex
+      ? parseInt (req.params.pageIndex)
+      : PAGE_INDEX;
+    const limit = req.params.limit ? parseInt (req.params.limit) : LIMIT;
+    const skip = (pageIndex - 1) * limit;
+
+    const docs = await Product.find ({category})
+      .populate ('saler')
+      .skip (skip)
+      .limit (limit)
+      .exec ();
+
+    return res.status (200).json ({docs});
+  } catch (err) {
+    return res.status (500).json ({
+      err,
+    });
+  }
+};
+
 const createProduct = (req, res) => {
   const {currentUser} = req;
   const newProduct = new Product ({
@@ -176,6 +199,7 @@ const getNewArrivalProducts = async (req, res) => {
 
 module.exports = {
   getProducts,
+  getProductsByCategory,
   getMostDiscountsProducts,
   getBestSaleProducts,
   getNewArrivalProducts,
