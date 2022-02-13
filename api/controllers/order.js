@@ -127,7 +127,7 @@ exports.updateOrder = async (req, res) => {
     ).exec ();
     return res
       .status (200)
-      .json ({message: 'updated', doc});
+      .json ({message: 'updated', orderId});
   } catch (err) {
     return res.status (500).json ({err});
   }

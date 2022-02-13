@@ -19,7 +19,7 @@ router.post('/', auth, createOrder);
 router.get('/ofUser', auth, getOrderFromUser);
 router.get('/ofSaler', auth, getOrderFromSaler);
 router.get('/:orderId', auth, getOrder);
-router.patch('item/in/cart/:orderId', auth, updateOrder);
+router.patch('/item/in/cart/:orderId', auth, updateOrder);
 router.delete('/:orderId', auth, deleteOrder);
 
 module.exports = router;
