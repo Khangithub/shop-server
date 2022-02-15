@@ -1,32 +1,6 @@
-const mongoose = require ('mongoose');
 const Comment = require ('../models/comment');
-
-exports.getAllComment = (req, res, next) => {
-  Comment.find ()
-    .populate ({
-      path: 'product',
-      select: '_id name',
-      populate: {
-        path: 'saler',
-        select: '_id username avatar',
-      },
-    })
-    .populate ({path: 'commentator', select: '_id username avatar'})
-    .populate ({
-      path: 'subComment.sender',
-      select: '_id username avatar',
-    })
-    .populate ({
-      path: 'subComment.receiver',
-      select: '_id username avatar',
-    })
-    .select ('-__v')
-    .exec ()
-    .then (comments =>
-      res.status (200).json ({counter: comments.length, comments})
-    )
-    .catch (error => console.log (error));
-};
+const LIMIT = 6;
+const PAGE_INDEX = 1;
 
 exports.addMainCmt = async (req, res) => {
   try {
@@ -45,35 +19,45 @@ exports.addMainCmt = async (req, res) => {
   }
 };
 
-exports.getCommentsFromProduct = (req, res, next) => {
-  const {productId} = req.params;
-  Comment.find ({
-    product: {
-      _id: productId,
-    },
-  })
-    .populate ({
-      path: 'product',
-      select: '_id name',
-      populate: {
-        path: 'saler',
-        select: '_id username avatar',
+exports.getProductCmts = async (req, res) => {
+  try {
+    const {productId} = req.params;
+    const pageIndex = req.params.pageIndex
+      ? parseInt (req.params.pageIndex)
+      : PAGE_INDEX;
+    const limit = req.params.limit ? parseInt (req.params.limit) : LIMIT;
+    const skip = (pageIndex - 1) * limit;
+
+    const cmtList = await Comment.find ({
+      product: {
+        _id: productId,
       },
     })
-    .populate ({path: 'commentator', select: '_id username avatar'})
-    .populate ({
-      path: 'subComment.sender',
-      select: '_id username avatar',
-    })
-    .populate ({
-      path: 'subComment.receiver',
-      select: '_id username avatar',
-    })
-    .select ('-__v')
-    .then (docs => {
-      return res.status (200).json ({docsg});
-    })
-    .catch (error => console.log (error));
+      .populate ({
+        path: 'product',
+        select: '_id name',
+        populate: {
+          path: 'saler',
+          select: '_id username avatar',
+        },
+      })
+      .populate ({path: 'commentator', select: '_id username avatar'})
+      .populate ({
+        path: 'subComment.sender',
+        select: '_id username avatar',
+      })
+      .populate ({
+        path: 'subComment.receiver',
+        select: '_id username avatar',
+      })
+      .skip (skip)
+      .limit (limit)
+      .exec ();
+
+    return res.status (200).json ({cmtList});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 exports.updateMainComment = async (req, res, next) => {

@@ -1,8 +1,7 @@
 const express = require ('express');
 const router = express.Router ({mergeParams: true});
 const {
-  getAllComment,
-  getCommentsFromProduct,
+  getProductCmts,
   getComment,
   addMainCmt,
   updateMainComment,
@@ -13,8 +12,7 @@ const {
 } = require ('../controllers/comment');
 const {auth} = require ('../middlewares/user');
 
-router.get ('/', getAllComment);
-router.get ('/of/product/:productId', getCommentsFromProduct);
+router.get ('/from/product/:productId/:batch/:limit', getProductCmts);
 router.get ('/:commentId', getComment);
 
 router.post ('/main', auth, addMainCmt);
