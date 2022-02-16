@@ -102,10 +102,27 @@ exports.replyCmt = async (req, res) => {
   try {
     const {commentId} = req.params;
     const {content, sender, receiver} = req.body;
-    const doc = await Comment.findByIdAndUpdate (commentId, {
+    await Comment.findByIdAndUpdate (commentId, {
       $push: {subComment: {content, sender, receiver}},
     });
-    console.log ('doc', doc);
+
+    const newCmt = await Comment.findOne ({
+      _id: commentId,
+      'subComment.content': content,
+      'subComment.sender': sender,
+      'subComment.receiver': receiver,
+    })
+      .populate ({
+        path: 'subComment.sender',
+        select: '_id username avatar',
+      })
+      .populate ({
+        path: 'subComment.receiver',
+        select: '_id username avatar',
+      })
+      .exec ();
+
+    const doc = newCmt.subComment.slice(-1).pop()
     return res.status (200).json ({doc, message: 'updated'});
   } catch (err) {
     return res.status (500).json ({err});
