@@ -2,7 +2,7 @@ const Comment = require ('../models/comment');
 const LIMIT = 6;
 const PAGE_INDEX = 1;
 
-exports.addMainCmt = async (req, res) => {
+exports.addCmt = async (req, res) => {
   try {
     const {product, mainComment} = req.body;
     const commentator = req.currentUser;
@@ -98,23 +98,18 @@ exports.deleteMainComment = (req, res, next) => {
     .catch (error => console.log (error));
 };
 
-exports.createSubComment = (req, res, next) => {
-  const {commentId} = req.params;
-  const {content, sender, receiver} = req.body;
-  const subContent = {content, sender, receiver};
-
-  Comment.update (
-    {_id: commentId},
-    {$push: {subComment: subContent}},
-    (err, doc) => {
-      if (err) {
-        console.log (err);
-      }
-      return res
-        .status (200)
-        .json ({doc, subContent, message: 'comment was updated'});
-    }
-  );
+exports.replyCmt = async (req, res) => {
+  try {
+    const {commentId} = req.params;
+    const {content, sender, receiver} = req.body;
+    const doc = await Comment.findByIdAndUpdate (commentId, {
+      $push: {subComment: {content, sender, receiver}},
+    });
+    console.log ('doc', doc);
+    return res.status (200).json ({doc, message: 'updated'});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 exports.updateSubComment = (req, res, next) => {
