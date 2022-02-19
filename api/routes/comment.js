@@ -10,6 +10,7 @@ const {
   replyCmt,
   updateSubComment,
   deleteSubComment,
+  uploadCmtMedia,
 } = require ('../controllers/comment');
 const {mediaUploader} = require ('../middlewares/multer');
 const {auth} = require ('../middlewares/user');
@@ -19,16 +20,10 @@ router.get ('/:commentId', getComment);
 
 router.post ('/', auth, addCmt);
 router.post (
-  '/cmt-media',
+  '/media',
   auth,
   mediaUploader.array ('cmt-media', 10),
-  (req, res, err) => {
-    if (err && Object.keys (err).length > 0) {
-      return res.status (500).json ({err});
-    }
-    const fileNames = req.files.map (file => file.filename);
-    return res.status (200).json ({fileNames});
-  }
+  uploadCmtMedia
 );
 
 router.patch ('/main/comment/:commentId', auth, updateMainComment);
