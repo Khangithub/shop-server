@@ -23,6 +23,7 @@ router.get('/media/:filename', getMedia);
 router.post ('/', auth, addCmt);
 router.post (
   '/media',
+  auth,
   mediaUploader.array ('cmt-media', 10),
   uploadCmtMedia
 );

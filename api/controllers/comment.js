@@ -157,8 +157,12 @@ exports.uploadCmtMedia = (req, res, err) => {
   if (err && Object.keys (err).length > 0) {
     return res.status (500).json ({err});
   }
-  const fileNames = req.files.map (file => file.filename);
-  return res.status (200).json ({fileNames});
+  console.log (req.files, 'end');
+  const uploadedMedia = req.files.map (({filename, mimetype}) => ({
+    filename,
+    mimetype,
+  }));
+  return res.status (200).json ({uploadedMedia});
 };
 
 exports.getMedia = (req, res) => {
