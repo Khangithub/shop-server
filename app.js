@@ -5,6 +5,7 @@ const bodyPaser = require('body-parser')
 const mongoose = require('mongoose')
 const cookiePareser = require('cookie-parser')
 const cors = require('cors')
+const upload = require('multer')();
 
 const productRouter = require('./api/routes/products')
 const orderRouter = require('./api/routes/orders')
@@ -27,9 +28,9 @@ mongoose.connection.on('connected', () => {
 
 app.use(morgan('dev'))
 app.use(cookiePareser())
-// app.use('/uploads', express.static('uploads'));
-app.use(bodyPaser.urlencoded({ extended: false }))
+
 app.use(bodyPaser.json())
+app.use(bodyPaser.urlencoded({ extended: true }))
 
 app.use(cors({ origin: '*' }))
 
