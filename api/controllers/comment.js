@@ -1,3 +1,4 @@
+const path = require ('path');
 const Comment = require ('../models/comment');
 const LIMIT = 6;
 const PAGE_INDEX = 1;
@@ -122,7 +123,7 @@ exports.replyCmt = async (req, res) => {
       })
       .exec ();
 
-    const doc = newCmt.subComment.slice(-1).pop()
+    const doc = newCmt.subComment.slice (-1).pop ();
     return res.status (200).json ({doc, message: 'updated'});
   } catch (err) {
     return res.status (500).json ({err});
@@ -158,7 +159,17 @@ exports.uploadCmtMedia = (req, res, err) => {
   }
   const fileNames = req.files.map (file => file.filename);
   return res.status (200).json ({fileNames});
-}
+};
+
+exports.getMedia = (req, res) => {
+  const {filename} = req.params;
+  if (!filename) {
+    return res.status (500).json ({
+      message: 'no filename specified',
+    });
+  }
+  res.sendFile (path.resolve (`./media/${filename}`));
+};
 
 exports.deleteSubComment = (req, res, next) => {
   const {commentId} = req.params;
