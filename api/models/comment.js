@@ -1,47 +1,53 @@
-const mongoose = require('mongoose')
-const moment = require('moment-timezone');
-const dateVietNam = moment.tz(Date.now(), "Asia/Ho_Chi_Minh");
+const mongoose = require ('mongoose');
+const moment = require ('moment-timezone');
+const dateVietNam = moment.tz (Date.now (), 'Asia/Ho_Chi_Minh');
 
-const commentSchema = mongoose.Schema({
+const commentSchema = mongoose.Schema ({
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
-    required: true
+    required: true,
   },
   commentator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    require: true
+    require: true,
   },
   mainComment: {
     type: String,
-    required: true
+    required: true,
   },
   published: {
     type: Date,
-    default: dateVietNam
+    default: dateVietNam,
   },
   subComment: [
     {
       sender: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
       },
       content: {
-        type: String
+        type: String,
       },
       receiver: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
       },
       published: {
         type: Date,
-        default: dateVietNam
-      }
-    }
-  ]
-})
+        default: dateVietNam,
+      },
+    },
+  ],
+  mediaList: [
+    {
+      filename: {type: String},
+      mimetype: {type: String},
+    },
+  ],
+});
 
-const order = mongoose.model('Comment', commentSchema)
+const order = mongoose.model ('Comment', commentSchema);
 
-module.exports = order
+module.exports = order;

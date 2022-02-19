@@ -6,14 +6,24 @@ const PAGE_INDEX = 1;
 exports.addCmt = async (req, res) => {
   try {
     const {product, mainComment} = req.body;
+
+    const mediaList = req.files.map (({filename, mimetype}) => ({
+      filename: 'https://shopeeholic-server.herokuapp.com/comments/media/' +
+        filename,
+      mimetype,
+    }));
+
     const commentator = req.currentUser;
-    const newComment = new Comment ({
+
+    const newCmt = new Comment ({
       product,
       mainComment,
       commentator,
+      mediaList,
     });
 
-    const doc = await newComment.save ();
+    const doc = await newCmt.save ();
+
     return res.status (200).json ({doc, message: 'updated'});
   } catch (err) {
     return res.status (500).json ({err});
@@ -157,7 +167,6 @@ exports.uploadCmtMedia = (req, res, err) => {
   if (err && Object.keys (err).length > 0) {
     return res.status (500).json ({err});
   }
-  console.log (req.files, 'end');
   const uploadedMedia = req.files.map (({filename, mimetype}) => ({
     filename,
     mimetype,

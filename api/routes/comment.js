@@ -18,9 +18,9 @@ const {auth} = require ('../middlewares/user');
 
 router.get ('/from/product/:productId/:batch/:limit', getProductCmts);
 router.get ('/:commentId', getComment);
-router.get('/media/:filename', getMedia);
+router.get ('/media/:filename', getMedia);
 
-router.post ('/', auth, addCmt);
+router.post ('/', auth, mediaUploader.array ('cmt-media', 4), addCmt);
 router.post (
   '/media',
   auth,
