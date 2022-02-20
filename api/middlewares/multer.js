@@ -15,7 +15,7 @@ const storage = multer.diskStorage ({
 
 exports.mediaUploader = multer ({
   storage,
-  limits: {fileSize: 12 * 1024 * 1024}, // 12MB
+  limits: {fileSize: 2 * 1024 * 1024}, // 2MB
   fileFilter: (_, file, cb) => {
     if (
       file.mimetype == 'image/png' ||

@@ -99,14 +99,14 @@ exports.getComment = (req, res, next) => {
     .catch (error => console.log (error));
 };
 
-exports.deleteMainComment = (req, res, next) => {
-  const {commentId} = req.params;
-  Comment.findByIdAndDelete (commentId)
-    .exec ()
-    .then (doc => {
-      return res.status (200).json ({doc, message: 'comment was deleted'});
-    })
-    .catch (error => console.log (error));
+exports.delCmt = async (req, res) => {
+  try {
+    const {commentId} = req.params;
+    await Comment.findByIdAndDelete (commentId).exec ();
+    return res.status (200).json ({message: 'deleted', commentId});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 exports.replyCmt = async (req, res) => {
@@ -161,17 +161,6 @@ exports.updateSubComment = (req, res, next) => {
     .catch (error => {
       return res.status (400).json ({error});
     });
-};
-
-exports.uploadCmtMedia = (req, res, err) => {
-  if (err && Object.keys (err).length > 0) {
-    return res.status (500).json ({err});
-  }
-  const uploadedMedia = req.files.map (({filename, mimetype}) => ({
-    filename,
-    mimetype,
-  }));
-  return res.status (200).json ({uploadedMedia});
 };
 
 exports.getMedia = (req, res) => {
