@@ -8,8 +8,7 @@ exports.addCmt = async (req, res) => {
     const {product, mainComment} = req.body;
 
     const mediaList = req.files.map (({filename, mimetype}) => ({
-      filename: 'https://shopeeholic-server.herokuapp.com/comments/media/' +
-        filename,
+      filename: process.env.DOMAIN + 'comments/media/' + filename,
       mimetype,
     }));
 
@@ -71,22 +70,23 @@ exports.getProductCmts = async (req, res) => {
   }
 };
 
-exports.updateMainComment = async (req, res, next) => {
-  const {commentId} = req.params;
-  const {mainComment} = req.body;
-  await Comment.findByIdAndUpdate (commentId, {$set: {mainComment}})
-    .exec ()
-    .then (doc => {
-      res.status (200).json ({
-        mainComment,
-        doc,
-      });
-    })
-    .catch (error => {
-      res.status (500).json ({
-        error: error,
-      });
-    });
+exports.editCmt = async (req, res) => {
+  try {
+    const {commentId} = req.params;
+    const {mainComment} = req.body;
+    const mediaList = req.files.map (({filename, mimetype}) => ({
+      filename: process.env.DOMAIN + 'comments/media/' + filename,
+      mimetype,
+    }));
+
+    await Comment.findByIdAndUpdate (commentId, {
+      $set: {mainComment, mediaList},
+    }).exec ();
+
+    return res.status (200).json ({message: 'edited', mediaList, mainComment});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 exports.getComment = (req, res, next) => {

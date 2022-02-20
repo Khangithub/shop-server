@@ -6,11 +6,11 @@ const {
   getComment,
   getMedia,
   addCmt,
-  updateMainComment,
+  editCmt,
   delCmt,
   replyCmt,
   updateSubComment,
-  deleteSubComment
+  deleteSubComment,
 } = require ('../controllers/comment');
 const {mediaUploader} = require ('../middlewares/multer');
 const {auth} = require ('../middlewares/user');
@@ -22,7 +22,12 @@ router.get ('/media/:filename', getMedia);
 router.post ('/', auth, mediaUploader.array ('cmt-media', 4), addCmt);
 router.post ('/reply/:commentId', replyCmt);
 
-router.patch ('/main/comment/:commentId', auth, updateMainComment);
+router.patch (
+  '/:commentId',
+  auth,
+  mediaUploader.array ('edit-cmt-media', 4),
+  editCmt
+);
 router.patch ('/sub/comment/:commentId', auth, updateSubComment);
 
 router.delete ('/:commentId', auth, delCmt);
