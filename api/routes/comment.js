@@ -11,11 +11,12 @@ const {
   replyCmt,
   updateSubComment,
   deleteSubComment,
+  backup,
 } = require ('../controllers/comment');
 const {mediaUploader} = require ('../middlewares/multer');
 const {auth} = require ('../middlewares/user');
 
-router.get ('/from/product/:productId/:batch/:limit', getProductCmts);
+router.get ('/of/product/:productId/:batch/:limit', getProductCmts);
 router.get ('/:commentId', getComment);
 router.get ('/media/:filename', getMedia);
 

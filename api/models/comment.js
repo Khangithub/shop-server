@@ -21,6 +21,11 @@ const commentSchema = mongoose.Schema ({
     type: Date,
     default: dateVietNam,
   },
+  edited: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   subComment: [
     {
       sender: {

@@ -79,11 +79,19 @@ exports.editCmt = async (req, res) => {
       mimetype,
     }));
 
-    await Comment.findByIdAndUpdate (commentId, {
-      $set: {mainComment, mediaList},
-    }).exec ();
-
-    return res.status (200).json ({message: 'edited', mediaList, mainComment});
+    if (mediaList.length > 0) {
+      await Comment.findByIdAndUpdate (commentId, {
+        $set: {mainComment, mediaList, edited: true},
+      }).exec ();
+      return res
+        .status (200)
+        .json ({message: 'edited', mediaList, mainComment});
+    } else {
+      await Comment.findByIdAndUpdate (commentId, {
+        $set: {mainComment, edited: true},
+      }).exec ();
+      return res.status (200).json ({message: 'edited', mainComment});
+    }
   } catch (err) {
     return res.status (500).json ({err});
   }
