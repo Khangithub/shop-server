@@ -128,7 +128,9 @@ exports.repCmt = async (req, res) => {
     }));
 
     await Comment.findByIdAndUpdate (commentId, {
-      $push: {subComment: {content, sender: req.currentUser._id, receiver, mediaList}},
+      $push: {
+        subComment: {content, sender: req.currentUser._id, receiver, mediaList},
+      },
     });
 
     const newCmt = await Comment.findOne ({
@@ -154,27 +156,23 @@ exports.repCmt = async (req, res) => {
   }
 };
 
-exports.updateSubComment = (req, res, next) => {
-  const {commentId} = req.params;
-  const {newContent} = req.body;
+exports.updateRep = async (req, res) => {
+  try {
+    const {commentId} = req.params;
+    const {newContent} = req.body;
 
-  Comment.update (
-    {'subComment._id': commentId},
-    {
-      $set: {
-        'subComment.$.content': newContent,
-      },
-    }
-  )
-    .exec ()
-    .then (doc => {
-      return res
-        .status (200)
-        .json ({message: 'subComment was updated', newContent, doc});
-    })
-    .catch (error => {
-      return res.status (400).json ({error});
-    });
+    await Comment.updateOne (
+      {'subComment._id': commentId},
+      {
+        $set: {
+          'subComment.$.content': newContent,
+        },
+      }
+    ).exec ();
+    return res.status (200).json ({message: 'updated', newContent});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 exports.getMedia = (req, res) => {

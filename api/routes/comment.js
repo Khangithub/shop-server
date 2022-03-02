@@ -9,9 +9,8 @@ const {
   editCmt,
   delCmt,
   repCmt,
-  updateSubComment,
-  deleteSubComment,
-  backup,
+  updateRep,
+  deleteSubComment
 } = require ('../controllers/comment');
 const {mediaUploader} = require ('../middlewares/multer');
 const {auth} = require ('../middlewares/user');
@@ -29,7 +28,7 @@ router.patch (
   mediaUploader.array ('edit-cmt-media', 4),
   editCmt
 );
-router.patch ('/sub/comment/:commentId', auth, updateSubComment);
+router.patch ('/sub/comment/:commentId', auth, updateRep);
 
 router.delete ('/:commentId', auth, delCmt);
 router.delete ('/sub/comment/:commentId', auth, deleteSubComment);
