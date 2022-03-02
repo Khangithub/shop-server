@@ -43,6 +43,12 @@ const commentSchema = mongoose.Schema ({
         type: Date,
         default: dateVietNam,
       },
+      mediaList: [
+        {
+          filename: {type: String},
+          mimetype: {type: String},
+        },
+      ],
     },
   ],
   mediaList: [

@@ -8,7 +8,7 @@ const {
   addCmt,
   editCmt,
   delCmt,
-  replyCmt,
+  repCmt,
   updateSubComment,
   deleteSubComment,
   backup,
@@ -21,7 +21,7 @@ router.get ('/:commentId', getComment);
 router.get ('/media/:filename', getMedia);
 
 router.post ('/', auth, mediaUploader.array ('cmt-media', 4), addCmt);
-router.post ('/reply/:commentId', replyCmt);
+router.post ('/reply/:commentId', auth, mediaUploader.array ('rep-media', 4), repCmt);
 
 router.patch (
   '/:commentId',

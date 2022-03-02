@@ -117,18 +117,24 @@ exports.delCmt = async (req, res) => {
   }
 };
 
-exports.replyCmt = async (req, res) => {
+exports.repCmt = async (req, res) => {
   try {
     const {commentId} = req.params;
-    const {content, sender, receiver} = req.body;
+    const {content, receiver} = req.body;
+
+    const mediaList = req.files.map (({filename, mimetype}) => ({
+      filename: process.env.DOMAIN + 'comments/media/' + filename,
+      mimetype,
+    }));
+
     await Comment.findByIdAndUpdate (commentId, {
-      $push: {subComment: {content, sender, receiver}},
+      $push: {subComment: {content, sender: req.currentUser._id, receiver, mediaList}},
     });
 
     const newCmt = await Comment.findOne ({
       _id: commentId,
       'subComment.content': content,
-      'subComment.sender': sender,
+      'subComment.sender': req.currentUser._id,
       'subComment.receiver': receiver,
     })
       .populate ({
