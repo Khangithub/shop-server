@@ -97,7 +97,7 @@ exports.editCmt = async (req, res) => {
   }
 };
 
-exports.getComment = (req, res, next) => {
+exports.getCmt = (req, res, next) => {
   const {commentId} = req.params;
   Comment.findById (commentId)
     .exec ()
@@ -175,7 +175,7 @@ exports.updateRep = async (req, res) => {
   }
 };
 
-exports.getMedia = (req, res) => {
+exports.getCmtMedia = (req, res) => {
   const {filename} = req.params;
   if (!filename) {
     return res.status (500).json ({
@@ -185,21 +185,20 @@ exports.getMedia = (req, res) => {
   res.sendFile (path.resolve (`./media/${filename}`));
 };
 
-exports.deleteSubComment = (req, res, next) => {
-  const {commentId} = req.params;
-  const {subCommentId} = req.body;
+exports.delRep = async (req, res) => {
+  try {
+    const {commentId} = req.params;
+    const {repId} = req.body;
 
-  Comment.findByIdAndUpdate (
-    {_id: commentId},
-    {
-      $pull: {subComment: {_id: subCommentId}},
-    }
-  )
-    .exec ()
-    .then (doc => {
-      return res.status (200).json ({message: 'subComment was deleted', doc});
-    })
-    .catch (error => {
-      return res.status (400).json ({error});
-    });
+    await Comment.findByIdAndUpdate (
+      {_id: commentId},
+      {
+        $pull: {subComment: {_id: repId}},
+      }
+    ).exec ();
+
+    return res.status (200).json ({message: 'deleted', commentId, repId});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };

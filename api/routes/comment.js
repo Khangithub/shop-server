@@ -3,21 +3,21 @@ const express = require ('express');
 const router = express.Router ({mergeParams: true});
 const {
   getProductCmts,
-  getComment,
-  getMedia,
+  getCmt,
+  getCmtMedia,
   addCmt,
   editCmt,
   delCmt,
   repCmt,
   updateRep,
-  deleteSubComment
+  delRep
 } = require ('../controllers/comment');
 const {mediaUploader} = require ('../middlewares/multer');
 const {auth} = require ('../middlewares/user');
 
 router.get ('/of/product/:productId/:batch/:limit', getProductCmts);
-router.get ('/:commentId', getComment);
-router.get ('/media/:filename', getMedia);
+router.get ('/:commentId', getCmt);
+router.get ('/media/:filename', getCmtMedia);
 
 router.post ('/', auth, mediaUploader.array ('cmt-media', 4), addCmt);
 router.post ('/reply/:commentId', auth, mediaUploader.array ('rep-media', 4), repCmt);
@@ -31,6 +31,6 @@ router.patch (
 router.patch ('/sub/comment/:commentId', auth, updateRep);
 
 router.delete ('/:commentId', auth, delCmt);
-router.delete ('/sub/comment/:commentId', auth, deleteSubComment);
+router.delete ('/reply/:commentId', auth, delRep);
 
 module.exports = router;
