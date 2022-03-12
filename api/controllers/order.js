@@ -141,19 +141,17 @@ const getOrderFromUser = (req, res) => {
     });
 };
 
-const delOrder = (req, res) => {
-  const id = req.params.orderId;
-  Order.deleteOne ({_id: id})
-    .exec ()
-    .then (doc => {
-      res.status (200).json ({
-        message: 'order deleted',
-        doc,
-      });
-    })
-    .catch (error => {
-      res.status (400).json ({error});
+const delOrder = async (req, res) => {
+  try {
+    const {orderId} = req.params;
+    await Order.deleteOne ({_id: orderId}).exec ();
+    return res.status (200).json ({
+      message: 'deleted',
+      orderId,
     });
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 module.exports = {
