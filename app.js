@@ -5,7 +5,6 @@ const bodyPaser = require('body-parser')
 const mongoose = require('mongoose')
 const cookiePareser = require('cookie-parser')
 const cors = require('cors')
-const upload = require('multer')();
 
 const productRouter = require('./api/routes/products')
 const orderRouter = require('./api/routes/orders')
