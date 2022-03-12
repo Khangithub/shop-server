@@ -2,31 +2,7 @@ const Order = require ('../models/order');
 const Product = require ('../models/product');
 const mongoose = require ('mongoose');
 
-exports.getAllOrder = (req, res, next) => {
-  Order.find ()
-    .select ('-__v')
-    .populate ({
-      path: 'product',
-      select: '-description',
-      populate: {
-        path: 'saler',
-        select: '-__v -password',
-      },
-    })
-    .populate ({path: 'buyer', select: '-__v -password'})
-    .exec ()
-    .then (docs => {
-      res.status (200).json ({
-        count: docs.length,
-        docs,
-      });
-    })
-    .catch (error => {
-      res.status (500).json (error);
-    });
-};
-
-exports.createOrder = (req, res, next) => {
+const addOrder = (req, res) => {
   const {currentUser} = req;
   Product.findById (req.body.product)
     .then (doc => {
@@ -63,7 +39,7 @@ exports.createOrder = (req, res, next) => {
     });
 };
 
-exports.getOrder = (req, res, next) => {
+const getOrder = (req, res) => {
   const id = req.params.orderId;
   Order.findById (id)
     .populate ({
@@ -86,7 +62,7 @@ exports.getOrder = (req, res, next) => {
     });
 };
 
-exports.getOrderFromSaler = async (req, res, next) => {
+const getOrderFromSaler = async (req, res) => {
   const salerId = req.currentUser._id;
   await Order.find ()
     .select ('-__v')
@@ -115,25 +91,23 @@ exports.getOrderFromSaler = async (req, res, next) => {
     });
 };
 
-exports.updateOrder = async (req, res) => {
+const editOrder = async (req, res) => {
   try {
     const {orderId} = req.params;
     const {quantity} = req.body;
-    const doc = await Order.findByIdAndUpdate (
+    await Order.findByIdAndUpdate (
       {_id: orderId, orderStatus: 'in-cart'},
       {
         quantity,
       }
     ).exec ();
-    return res
-      .status (200)
-      .json ({message: 'updated', orderId});
+    return res.status (200).json ({message: 'updated', orderId});
   } catch (err) {
     return res.status (500).json ({err});
   }
 };
 
-exports.getOrderFromUser = (req, res, next) => {
+const getOrderFromUser = (req, res) => {
   const userId = req.currentUser._id;
   Order.find ()
     .select ('-__v')
@@ -167,7 +141,7 @@ exports.getOrderFromUser = (req, res, next) => {
     });
 };
 
-exports.deleteOrder = (req, res, next) => {
+const delOrder = (req, res) => {
   const id = req.params.orderId;
   Order.deleteOne ({_id: id})
     .exec ()
@@ -180,4 +154,13 @@ exports.deleteOrder = (req, res, next) => {
     .catch (error => {
       res.status (400).json ({error});
     });
+};
+
+module.exports = {
+  addOrder,
+  getOrder,
+  getOrderFromSaler,
+  editOrder,
+  getOrderFromUser,
+  delOrder,
 };
