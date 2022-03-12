@@ -1,42 +1,51 @@
 const Order = require ('../models/order');
 const Product = require ('../models/product');
-const mongoose = require ('mongoose');
+const {ObjectId} = require ('mongoose').Types;
 
-const addOrder = (req, res) => {
-  const {currentUser} = req;
-  Product.findById (req.body.product)
-    .then (doc => {
-      if (!doc) {
-        return res.status (404).json ({
-          message: 'Product not found',
-        });
-      }
+const addOrder = async (req, res) => {
+  try {
+    const {currentUser} = req;
+    const {product, quantity} = req.body;
+    const productDoc = await Product.findById (product);
+
+    if (!productDoc) {
+      return res.status (404).json ({
+        message: 'product not found',
+      });
+    }
+
+    const inCartOrder = await Order.findOne ({
+      buyer: currentUser._id,
+      product,
+      orderStatus: 'in-cart',
+    });
+
+    // if this product already in cart then update the quantity
+    if (inCartOrder) {
+      inCartOrder.quantity = inCartOrder.quantity + quantity;
+      await inCartOrder.save ();
+      return res.status (200).json ({
+        doc: inCartOrder,
+        message: 'updated',
+      });
+    } 
+    // else add new order in database
+    else {
       const order = new Order ({
-        _id: mongoose.Types.ObjectId (),
-        product: req.body.product,
-        quantity: req.body.quantity,
+        _id: ObjectId (),
+        product,
+        quantity,
         buyer: currentUser,
       });
-
-      order
-        .save ()
-        .then (doc => {
-          res.status (200).json ({
-            message: 'Order stored',
-            doc,
-          });
-        })
-        .catch (error => {
-          console.log (error);
-          res.status (500).json (500);
-        });
-    })
-    .catch (error => {
-      res.status (500).json ({
-        message: 'id not found',
-        error: error,
+      const orderDoc = await order.save ();
+      return res.status (200).json ({
+        doc: orderDoc,
+        message: 'added',
       });
-    });
+    }
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 const getOrder = (req, res) => {
