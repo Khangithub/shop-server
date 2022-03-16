@@ -1,55 +1,86 @@
-const express = require('express')
-const app = express()
-const morgan = require('morgan')
-const bodyPaser = require('body-parser')
-const mongoose = require('mongoose')
-const cookiePareser = require('cookie-parser')
-const cors = require('cors')
+const express = require ('express');
+const app = express ();
+const morgan = require ('morgan');
+const bodyPaser = require ('body-parser');
+const mongoose = require ('mongoose');
+const cookiePareser = require ('cookie-parser');
+const cors = require ('cors');
+const http = require ('http');
+const {Server} = require ('socket.io');
+const port = process.env.PORT || 5000;
+const server = http.createServer (app);
 
-const productRouter = require('./api/routes/products')
-const orderRouter = require('./api/routes/orders')
-const userRouter = require('./api/routes/user')
-const commentRouter = require('./api/routes/comment')
+const productRouter = require ('./api/routes/products');
+const orderRouter = require ('./api/routes/orders');
+const userRouter = require ('./api/routes/user');
+const commentRouter = require ('./api/routes/comment');
 
-mongoose.connect(process.env.MONGO_ATLAS_URL, {
+app.use (cors ({origin: '*'}));
+app.use (morgan ('dev'));
+app.use (cookiePareser ());
+
+app.use (bodyPaser.json ());
+app.use (bodyPaser.urlencoded ({extended: true}));
+
+mongoose.connect (process.env.MONGO_ATLAS_URL, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useUnifiedTopology: false, // sau 30000ms mongo server sẽ tự động đóng
   useFindAndModify: false,
-  useUnifiedTopology: true
-})
+  useUnifiedTopology: true,
+});
 
-mongoose.Promise = global.Promise
+mongoose.Promise = global.Promise;
 
-mongoose.connection.on('connected', () => {
-  console.log('connected to mongo atlas')
-})
+mongoose.connection.on ('connected', () => {
+  console.log ('CONNECTED TO MONGO ATLAS');
+});
 
-app.use(morgan('dev'))
-app.use(cookiePareser())
+const io = new Server (server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
 
-app.use(bodyPaser.json())
-app.use(bodyPaser.urlencoded({ extended: true }))
+io.on ('connection', socket => {
+  console.log (`User Connected: ${socket.id}`);
 
-app.use(cors({ origin: '*' }))
+  socket.on ('join_room', room => {
+    socket.join (room);
+    console.log (`User with ID: ${socket.id} joined room: ${room}`);
+  });
 
-app.use('/products', productRouter)
-app.use('/orders', orderRouter)
-app.use('/users', userRouter)
-app.use('/comments', commentRouter)
-app.use((req, res, next) => {
-  const error = new Error('Not found')
-  error.status = 404
-  next(error)
-})
+  socket.on ('send_message', ({room, msg, role}) => {
+    socket.to (room).emit ('receive_message', {msg, role});
+    console.log('msg', room, msg, role)
+  });
 
-app.use((error, req, res, next) => {
-  res.status(error.status || 500)
-  res.json({
+  socket.on ('disconnect', () => {
+    console.log ('User Disconnected', socket.id);
+  });
+});
+
+app.use ('/products', productRouter);
+app.use ('/orders', orderRouter);
+app.use ('/users', userRouter);
+app.use ('/comments', commentRouter);
+
+app.use ((req, res, next) => {
+  const error = new Error ('Not found');
+  error.status = 404;
+  next (error);
+});
+
+app.use ((error, req, res) => {
+  res.status (error.status || 500);
+  res.json ({
     error: {
-      message: error.message
-    }
-  })
-})
+      message: error.message,
+    },
+  });
+});
 
-module.exports = app
+server.listen (port, () => {
+  console.log ('SERVER RUNNING');
+});
