@@ -51,9 +51,8 @@ io.on ('connection', socket => {
     console.log (`User with ID: ${socket.id} joined room: ${room}`);
   });
 
-  socket.on ('send_message', ({room, msg, role}) => {
-    socket.to (room).emit ('receive_message', {msg, role});
-    console.log('msg', room, msg, role)
+  socket.on ('send_message', ({room, msg, from, to, createdAt}) => {
+    socket.to (room).emit ('receive_message', {msg, from, to, createdAt});
   });
 
   socket.on ('disconnect', () => {
@@ -82,5 +81,5 @@ app.use ((error, req, res) => {
 });
 
 server.listen (port, () => {
-  console.log ('SERVER RUNNING');
+  console.log ('SERVER RUNNING ON PORT', port);
 });
