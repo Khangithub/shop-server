@@ -5,10 +5,10 @@ const {
   getProductsByCategory,
   getMostDiscountsProducts,
   getBestSaleProducts,
-  createProduct,
+  addProduct,
   getProduct,
-  updateProduct,
-  deleteProduct,
+  editProduct,
+  delProduct,
   getNewArrivalProducts,
 } = require ('../controllers/product');
 
@@ -21,10 +21,10 @@ router.get ('/most/discounts/:pageIndex/:limit', getMostDiscountsProducts);
 router.get ('/best/sale/:pageIndex/:limit', getBestSaleProducts);
 router.get ('/new/arrival/:pageIndex/:limit', getNewArrivalProducts);
 
-router.post ('/', auth, createProduct);
+router.post ('/', auth, addProduct);
 
-router.patch ('/:productId', auth, updateProduct);
+router.patch ('/:productId', auth, editProduct);
 
-router.delete ('/:productId', auth, deleteProduct);
+router.delete ('/:productId', auth, delProduct);
 
 module.exports = router;

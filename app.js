@@ -15,6 +15,9 @@ const productRouter = require ('./api/routes/products');
 const orderRouter = require ('./api/routes/orders');
 const userRouter = require ('./api/routes/user');
 const commentRouter = require ('./api/routes/comment');
+const chatRouter = require('./api/routes/chat');
+
+const Chat = require ('./api/models/chat');
 
 app.use (cors ({origin: '*'}));
 app.use (morgan ('dev'));
@@ -52,7 +55,16 @@ io.on ('connection', socket => {
     console.log (`User with ID: ${socket.id} joined room: ${room}`);
   });
 
-  socket.on ('send_message', ({room, msg, from, to, createdAt}) => {
+  socket.on ('send_message', async ({room, msg, from, to, createdAt}) => {
+    const newMsg = new Chat ({
+      _id: new mongoose.Types.ObjectId (),
+      msg,
+      from,
+      to,
+      createdAt,
+      room
+    });
+    await newMsg.save ();
     socket.to (room).emit ('receive_message', {msg, from, to, createdAt});
   });
 
@@ -65,14 +77,15 @@ app.use ('/products', productRouter);
 app.use ('/orders', orderRouter);
 app.use ('/users', userRouter);
 app.use ('/comments', commentRouter);
+app.use ('/chats', chatRouter);
 
-app.use ((req, res, next) => {
+app.use ((_, __, next) => {
   const error = new Error ('Not found');
   error.status = 404;
   next (error);
 });
 
-app.use ((error, req, res) => {
+app.use ((error, _, res) => {
   res.status (error.status || 500);
   res.json ({
     error: {

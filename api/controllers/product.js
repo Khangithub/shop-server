@@ -51,29 +51,27 @@ const getProductsByCategory = async (req, res) => {
   }
 };
 
-const createProduct = (req, res) => {
-  const {currentUser} = req;
-  const newProduct = new Product ({
-    _id: new mongoose.Types.ObjectId (),
-    name: req.body.name,
-    price: req.body.price,
-    productImage: req.body.productImage,
-    saler: currentUser._id,
-    category: req.body.category,
-    rating: getIntInRange (1, 5),
-    inStock: getIntInRange (500, 10000),
-    sold: getIntInRange (150, 3000),
-    createAt: new Date (),
-  });
-
-  newProduct
-    .save ()
-    .then (doc => {
-      return res.status (200).json ({doc, message: 'product created'});
-    })
-    .catch (err => {
-      return res.status (500).json ({err});
+const addProduct = async (req, res) => {
+  try {
+    const {currentUser} = req;
+    const newProduct = new Product ({
+      _id: new mongoose.Types.ObjectId (),
+      name: req.body.name,
+      price: req.body.price,
+      productImage: req.body.productImage,
+      saler: currentUser._id,
+      category: req.body.category,
+      rating: getIntInRange (1, 5),
+      inStock: getIntInRange (500, 10000),
+      sold: getIntInRange (150, 3000),
+      createAt: new Date (),
     });
+
+    const doc = await newProduct.save ();
+    return res.status (200).json ({doc, message: 'product created'});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
 const getProduct = async (req, res) => {
@@ -99,14 +97,14 @@ const getProduct = async (req, res) => {
     });
 };
 
-const updateProduct = (req, res) => {
+const editProduct = (req, res) => {
   const {productId} = req.params;
-  const updateProduct = req.body;
-  Product.findByIdAndUpdate (productId, updateProduct)
+  const editProduct = req.body;
+  Product.findByIdAndUpdate (productId, editProduct)
     .exec ()
     .then (doc => {
       res.status (200).json ({
-        message: JSON.stringify (updateProduct),
+        message: JSON.stringify (editProduct),
         doc,
       });
     })
@@ -117,7 +115,7 @@ const updateProduct = (req, res) => {
     });
 };
 
-const deleteProduct = async (req, res) => {
+const delProduct = async (req, res) => {
   Product.findByIdAndDelete (req.params.productId)
     .then (doc => {
       return res.status (200).send ({
@@ -204,7 +202,7 @@ module.exports = {
   getBestSaleProducts,
   getNewArrivalProducts,
   getProduct,
-  createProduct,
-  updateProduct,
-  deleteProduct,
+  addProduct,
+  editProduct,
+  delProduct,
 };
