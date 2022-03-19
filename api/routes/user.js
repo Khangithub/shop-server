@@ -1,52 +1,33 @@
-const express = require ('express');
-const router = express.Router ({mergeParams: true});
-
+const router = require ('express').Router ({mergeParams: true});
 const {auth} = require ('../middlewares/user');
-const {createSignUpMail} = require ('../middlewares/mail');
 
 const {
-  comparePasswords,
-  signInWithGoogle,
+  signInWithPwd,
+  signInWithGg,
   signUp,
   getCurrentUser,
   getUser,
-  changePassword,
-  deleteUser,
-  getAllUser,
-  createUser,
-  updateAvatar,
-  updateUser,
-  updatePassword,
+  delUser,
+  getUsers,
+  editAvatar,
+  changeUsername,
+  changePwd,
+  resetAcc,
 } = require ('../controllers/user');
 
-const {
-  isUserExistFromMail,
-  compareDefaultPassowrd,
-} = require ('../middlewares/user');
-const {createChangePasswordMail} = require ('../middlewares/mail');
+router.get ('/', getUsers); // undone, admin auth
+router.get ('/me', auth, getCurrentUser);
+router.get ('/:userId', getUser); // undone, admin auth
 
-router.post (
-  '/signup',
-  isUserExistFromMail,
-  signUp,
-  createSignUpMail,
-  createUser
-);
-router.post ('/login/pwd', compareDefaultPassowrd, comparePasswords); // done
-router.post ('/login/google', signInWithGoogle); // done
-router.get ('/me', auth, getCurrentUser); // done
-router.get ('/:userId', getUser); // done
+router.post ('/signup', signUp);
+router.post ('/login/pwd', signInWithPwd);
+router.post ('/login/google', signInWithGg);
+router.post ('/reset/acc', resetAcc);
 
-router.patch ('/me/avatar', auth, updateAvatar); // chua xong
-router.patch ('/me/info', auth, updateUser); // done
-router.patch (
-  '/me/pwd',
-  auth,
-  changePassword,
-  createChangePasswordMail,
-  updatePassword
-); // done
-router.delete ('/:userId', auth, deleteUser);
-router.get ('/', getAllUser); // done
+router.patch ('/me/avatar', auth, editAvatar); // undone
+router.patch ('/me/info', auth, changeUsername);
+router.patch ('/me/pwd', auth, changePwd); // undone, send msg confirm thoughout phone
+
+router.delete ('/:userId', auth, delUser); // undone, also remove all comments, products, message
 
 module.exports = router;

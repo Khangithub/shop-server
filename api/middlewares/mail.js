@@ -36,32 +36,3 @@ exports.createSignUpMail = (req, res, next) => {
     }
   });
 };
-
-exports.createChangePasswordMail = (req, res, next) => {
-  const {pwd} = req.body;
-  const {email} = req.currentUser;
-  var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
-    },
-  });
-
-  var mailOptions = {
-    from: 'sale.shopeeholic@gmail.com',
-    to: email,
-    subject: 'Shopeeholic Change Password Confirm',
-    text: `Your password was changed. New Password is "${pwd}"`,
-  };
-
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      console.log(err, 'err in sending mail');
-     next()
-    } else {
-      console.log('Email sent: ' + info.response);
-     next()
-    }
-  });
-}

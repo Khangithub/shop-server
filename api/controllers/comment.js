@@ -3,7 +3,7 @@ const Comment = require ('../models/comment');
 const LIMIT = 6;
 const PAGE_INDEX = 1;
 
-exports.addCmt = async (req, res) => {
+const addCmt = async (req, res) => {
   try {
     const {product, mainComment} = req.body;
 
@@ -29,7 +29,7 @@ exports.addCmt = async (req, res) => {
   }
 };
 
-exports.getProductCmts = async (req, res) => {
+const getProductCmts = async (req, res) => {
   try {
     const {productId} = req.params;
     const pageIndex = req.params.pageIndex
@@ -70,7 +70,7 @@ exports.getProductCmts = async (req, res) => {
   }
 };
 
-exports.editCmt = async (req, res) => {
+const editCmt = async (req, res) => {
   try {
     const {commentId} = req.params;
     const {mainComment} = req.body;
@@ -97,7 +97,7 @@ exports.editCmt = async (req, res) => {
   }
 };
 
-exports.getCmt = (req, res, next) => {
+const getCmt = (req, res, next) => {
   const {commentId} = req.params;
   Comment.findById (commentId)
     .exec ()
@@ -107,7 +107,7 @@ exports.getCmt = (req, res, next) => {
     .catch (error => console.log (error));
 };
 
-exports.delCmt = async (req, res) => {
+const delCmt = async (req, res) => {
   try {
     const {commentId} = req.params;
     await Comment.findByIdAndDelete (commentId).exec ();
@@ -117,7 +117,7 @@ exports.delCmt = async (req, res) => {
   }
 };
 
-exports.repCmt = async (req, res) => {
+const repCmt = async (req, res) => {
   try {
     const {commentId} = req.params;
     const {content, receiver} = req.body;
@@ -156,7 +156,7 @@ exports.repCmt = async (req, res) => {
   }
 };
 
-exports.updateRep = async (req, res) => {
+const editRep = async (req, res) => {
   try {
     const {commentId} = req.params;
     const {newContent} = req.body;
@@ -175,7 +175,7 @@ exports.updateRep = async (req, res) => {
   }
 };
 
-exports.getCmtMedia = (req, res) => {
+const getCmtMedia = (req, res) => {
   const {filename} = req.params;
   if (!filename) {
     return res.status (500).json ({
@@ -185,7 +185,7 @@ exports.getCmtMedia = (req, res) => {
   res.sendFile (path.resolve (`./media/${filename}`));
 };
 
-exports.delRep = async (req, res) => {
+const delRep = async (req, res) => {
   try {
     const {commentId} = req.params;
     const {repId} = req.body;
@@ -201,4 +201,16 @@ exports.delRep = async (req, res) => {
   } catch (err) {
     return res.status (500).json ({err});
   }
+};
+
+module.exports = {
+  addCmt,
+  getProductCmts,
+  editCmt,
+  getCmt,
+  delCmt,
+  repCmt,
+  editRep,
+  getCmtMedia,
+  delRep,
 };

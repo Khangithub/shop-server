@@ -1,230 +1,193 @@
-require('dotenv').config();
+const bcrypt = require ('bcrypt');
+const mongoose = require ('mongoose');
+const jwt = require ('jsonwebtoken');
+const User = require ('../models/user');
 
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-
-const User = require('../models/user');
-
-exports.getAllUser = (req, res, next) => {
-  User.find({})
-    .select('email username role avatar')
-    .exec()
-    .then((users) => {
-      users
-        ? res.status(200).json({users})
-        : res.status(400).json({message: 'user list empty'});
-    })
-    .catch((error) => res.status(400).json({error}));
-};
-
-exports.signUp = (req, res, next) => {
-  const {email, role, avatar, username} = req.body;
-  bcrypt.hash(process.env.DEFAULT_PASSWORD, 10, (err, hash) => {
-    if (err) {
-      return res.status(500).json({message: 'error in hash password', err});
-    } else {
-      const newUser = new User({
-        _id: new mongoose.Types.ObjectId(),
-        email,
-        password: hash,
-        role,
-        avatar,
-        username,
-      });
-
-      newUser
-        .save()
-        .then((doc) => {
-          req.currentUser = doc;
-          next();
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({err});
-        });
-    }
-  });
-};
-
-exports.getCurrentUser = (req, res, next) => {
-  const {currentUser} = req;
-  return res.status(200).json({currentUser});
-};
-
-exports.getUser = (req, res, next) => {
-  const {userId} = req.params;
-  User.findById(userId)
-    .exec()
-    .then((user) => {
-      if (user) {
-        res.status(200).json({user});
-      } else {
-        res.status(400).json({
-          message: 'user not found',
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
-exports.changePassword = (req, res, next) => {
-  const userId = req.currentUser._id;
-  const {pwd, confirmedPwd} = req.body;
-
-  if (pwd !== confirmedPwd) {
-    console.log('pwd not matched');
-    return res.status(400).json({message: 'pwd are not matched'});
+const getUsers = async (_, res) => {
+  try {
+    const users = await User.find ({})
+      .select ('email username role avatar')
+      .exec ();
+    return res.status (200).json ({users});
+  } catch (err) {
+    return res.status (500).json ({err});
   }
-
-  bcrypt.hash(pwd, 10, (err, hash) => {
-    if (err) {
-      return res.status(400).json({message: 'err in hash password', err});
-    }
-
-    User.findByIdAndUpdate(userId, {password: hash})
-      .exec()
-      .then((doc) => {
-        console.log(doc, 'change pwd doc');
-        next();
-      })
-      .catch((err) => {
-        return res.status(500).json({message: 'err in change pwd', err});
-      });
-  });
 };
 
-exports.comparePasswords = (req, res, next) => {
-  const {email, password} = req.body;
-
-  User.find({email})
-    .exec()
-    .then((users) => {
-      // kết quả trả về là một mảng các user, user là số nhiều
-
-      // nếu tài khoảng không tồn tại
-      if (users.length < 1) {
-        return res.status(401).json({message: 'Account was not existed'});
-      }
-
-      bcrypt.compare(password, users[0].password, (err, isSame) => {
-        if (err) {
-          console.log(err);
-          return res.status(401).json({message: 'password problem'});
-        }
-
-        if (!isSame) {
-          return res.status(401).json({message: 'wrong password'});
-        }
-
-        const token = jwt.sign(
-          {data: JSON.stringify(users[0]._id)},
-          process.env.JWT_KEY,
-          {
-            expiresIn: '1d',
-          }
-        );
-
-        return res.status(200).json({token, currentUser: users[0]});
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({err});
+const signUp = async (req, res) => {
+  try {
+    const {email, role, avatar, username} = req.body;
+    const password = await bcrypt.hash (process.env.DEFAULT_PASSWORD, 10);
+    const newUser = new User ({
+      _id: new mongoose.Types.ObjectId (),
+      email,
+      password,
+      role,
+      avatar,
+      username,
     });
-};
 
-exports.signInWithGoogle = (req, res, next) => {
-  const {email} = req.body;
-
-  User.find({email})
-    .exec()
-    .then((users) => {
-      // kết quả trả về là một mảng các user, user là số nhiều
-
-      // nếu tài khoảng không tồn tại
-      if (users.length < 1) {
-        return res.status(401).json({message: 'Account was not existed'});
-      }
-
-      const token = jwt.sign(
-        {data: JSON.stringify(users[0]._id)},
+    const doc = await newUser.save ();
+    if (doc) {
+      req.currentUser = doc;
+      const token = jwt.sign (
+        {data: JSON.stringify (doc._id)},
         process.env.JWT_KEY,
         {
           expiresIn: '1d',
         }
       );
 
-      return res.status(200).json({token, currentUser: users[0]});
-    })
-    .catch((err) => {
-      res.status(500).json({err});
-    });
-};
-
-exports.deleteUser = (req, res, next) => {
-  User.deleteOne({_id: req.params.userId}) // params có "s", plural
-    .exec()
-    .then((user) => {
-      res.status(200).json({
-        message: 'User deleted',
-        id: req.params.userId,
-        user,
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({error});
-    });
-};
-
-exports.createUser = (req, res, next) => {
-  const {currentUser} = req;
-
-  const token = jwt.sign(
-    {data: JSON.stringify(currentUser._id)},
-    process.env.JWT_KEY,
-    {
-      expiresIn: '1d',
+      return res
+        .status (200)
+        .json ({message: 'created', token, currentUser: doc});
     }
-  );
-  console.log(currentUser, token);
-  return res
-    .status(200)
-    .json({message: 'new user created', token, currentUser});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
-exports.updateAvatar = (req, res, next) => {
-  const currentId = req.currentUser._id;
-  const {newImg} = req.body;
-  User.findByIdAndUpdate(currentId, {avatar: newImg})
-    .exec()
-    .then((doc) => {
-      return res.status(200).json({message: 'avatar changed', doc});
-    })
-    .catch((err) => {
-      return res.status(500).json({message: 'err in changing avatar', err});
+const getCurrentUser = (req, res) => {
+  const {currentUser} = req;
+  return res.status (200).json ({currentUser});
+};
+
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById (req.params.userId).exec ();
+    return res.status (200).json ({user});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
+};
+
+const signInWithPwd = async (req, res) => {
+  try {
+    const {email, password} = req.body;
+    const user = await User.findOne ({email}).exec ();
+
+    if (!user) {
+      return res.status (401).json ({message: 'user doese not exist'});
+    }
+
+    const isSamePwd = await bcrypt.compare (password, user.password);
+    if (!isSamePwd) {
+      return res.status (401).json ({message: 'wrong password'});
+    } else {
+      const token = jwt.sign (
+        {data: JSON.stringify (user._id)},
+        process.env.JWT_KEY,
+        {
+          expiresIn: '1d',
+        }
+      );
+      req.currentUser = user;
+      return res.status (200).json ({token, currentUser: user});
+    }
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
+};
+
+const signInWithGg = async (req, res) => {
+  try {
+    const {email} = req.body;
+    const user = await User.findOne ({email}).exec ();
+    if (!user) {
+      return res.status (401).json ({message: 'user does not exist'});
+    }
+    const token = jwt.sign (
+      {data: JSON.stringify (user._id)},
+      process.env.JWT_KEY,
+      {
+        expiresIn: '1d',
+      }
+    );
+    req.currentUser = user;
+    return res.status (200).json ({token, currentUser: user});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
+};
+
+const delUser = async (req, res) => {
+  try {
+    await User.deleteOne ({_id: req.params.userId}).exec (); // params có "s", plural
+    return res.status (200).json ({message: 'user is deleted'});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
+};
+
+const editAvatar = async (req, res) => {
+  try {
+    const {newImg} = req.body;
+    const doc = await User.findByIdAndUpdate (req.currentUser._id, {
+      avatar: newImg,
+    }).exec ();
+    return res.status (200).json ({message: 'avatar is updated', doc});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
+};
+
+const changeUsername = async (req, res) => {
+  try {
+    const doc = await User.findByIdAndUpdate (req.currentUser._id, {
+      username: req.body.newUsername,
+    }).exec ();
+    return res.status (200).json ({message: 'username is changed', doc});
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
+};
+
+const changePwd = async (req, res) => {
+  try {
+    const {pwd, confirmedPwd} = req.body;
+
+    if (pwd !== confirmedPwd) {
+      return res.status (400).json ({message: 'passwords are not matched'});
+    }
+
+    const password = await bcrypt.hash (pwd, 10);
+
+    await User.findByIdAndUpdate (req.currentUser._id, {
+      password,
+    }).exec ();
+
+    return res.status (200).json ({
+      message: 'password changed',
     });
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
-exports.updateUser = (req, res, next) => {
-  const currentId = req.currentUser._id;
-  console.log(currentId);
-  const {username, role, email} = req.body;
-  User.findByIdAndUpdate(currentId, {username, role, email})
-    .exec()
-    .then((doc) => {
-      return res.status(200).json({message: 'info changed', doc});
-    })
-    .catch((err) => {
-      return res.status(500).json({message: 'err in changing info', err});
+const resetAcc = async (req, res) => {
+  try {
+    const {email} = req.body;
+    const defaultPwd = await bcrypt.hash (process.env.DEFAULT_PASSWORD, 10);
+    const doc = await User.updateOne ({email}, {password: defaultPwd}).exec ();
+    return res.status (200).json ({
+      doc,
+      message: `password has been reset to ${process.env.DEFAULT_PASSWORD}`,
     });
+  } catch (err) {
+    return res.status (500).json ({err});
+  }
 };
 
-exports.updatePassword = (req, res, next) => {
-  return res.status(200).json({
-    message: 'password changed',
-    isChanged: true,
-  });
+module.exports = {
+  getUsers,
+  signUp,
+  getCurrentUser,
+  getUser,
+  signInWithPwd,
+  signInWithGg,
+  delUser,
+  editAvatar,
+  changeUsername,
+  changePwd,
+  resetAcc,
 };
