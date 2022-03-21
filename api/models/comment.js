@@ -15,7 +15,6 @@ const commentSchema = Schema ({
   },
   mainComment: {
     type: String,
-    required: true,
   },
   published: {
     type: Date,

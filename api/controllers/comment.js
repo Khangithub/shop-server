@@ -1,4 +1,5 @@
 const path = require ('path');
+const {uploadFile} = require ('../middlewares/firebase');
 const Comment = require ('../models/comment');
 const LIMIT = 6;
 const PAGE_INDEX = 1;
@@ -7,10 +8,9 @@ const addCmt = async (req, res) => {
   try {
     const {product, mainComment} = req.body;
 
-    const mediaList = req.files.map (({filename, mimetype}) => ({
-      filename: process.env.DOMAIN + 'comments/media/' + filename,
-      mimetype,
-    }));
+    const mediaList = await Promise.all (
+      req.files.map (file => uploadFile (file, 'shop-cmt'))
+    );
 
     const commentator = req.currentUser;
 
@@ -25,6 +25,7 @@ const addCmt = async (req, res) => {
 
     return res.status (200).json ({doc, message: 'updated'});
   } catch (err) {
+    console.log ('err', err);
     return res.status (500).json ({err});
   }
 };
@@ -74,10 +75,10 @@ const editCmt = async (req, res) => {
   try {
     const {commentId} = req.params;
     const {mainComment} = req.body;
-    const mediaList = req.files.map (({filename, mimetype}) => ({
-      filename: process.env.DOMAIN + 'comments/media/' + filename,
-      mimetype,
-    }));
+
+    const mediaList = await Promise.all (
+      req.files.map (file => uploadFile (file, 'shop-cmt'))
+    );
 
     if (mediaList.length > 0) {
       await Comment.findByIdAndUpdate (commentId, {
