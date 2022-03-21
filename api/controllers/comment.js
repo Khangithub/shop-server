@@ -97,7 +97,7 @@ const editCmt = async (req, res) => {
   }
 };
 
-const getCmt = (req, res, next) => {
+const getCmt = (req, res) => {
   const {commentId} = req.params;
   Comment.findById (commentId)
     .exec ()

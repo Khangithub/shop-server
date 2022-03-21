@@ -29,7 +29,7 @@ app.use (bodyPaser.urlencoded ({extended: true}));
 mongoose.connect (process.env.MONGO_ATLAS_URL, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
-  useUnifiedTopology: false, // sau 30000ms mongo server sẽ tự động đóng
+  useUnifiedTopology: false, 
   useFindAndModify: false,
   useUnifiedTopology: true,
 });

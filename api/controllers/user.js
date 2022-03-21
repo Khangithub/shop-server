@@ -189,5 +189,5 @@ module.exports = {
   editAvatar,
   changeUsername,
   changePwd,
-  resetAcc,
+  resetAcc
 };

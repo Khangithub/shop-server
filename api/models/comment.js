@@ -1,15 +1,15 @@
-const mongoose = require ('mongoose');
+const {Schema, model} = require ('mongoose');
 const moment = require ('moment-timezone');
 const dateVietNam = moment.tz (Date.now (), 'Asia/Ho_Chi_Minh');
 
-const commentSchema = mongoose.Schema ({
+const commentSchema = Schema ({
   product: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Product',
     required: true,
   },
   commentator: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     require: true,
   },
@@ -29,14 +29,14 @@ const commentSchema = mongoose.Schema ({
   subComment: [
     {
       sender: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
       },
       content: {
         type: String,
       },
       receiver: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
       },
       published: {
@@ -59,6 +59,4 @@ const commentSchema = mongoose.Schema ({
   ],
 });
 
-const order = mongoose.model ('Comment', commentSchema);
-
-module.exports = order;
+module.exports = model ('Comment', commentSchema);

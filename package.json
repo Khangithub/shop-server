@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sentry/node": "5.15.5",
     "bcrypt": "^3.0.8",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
@@ -27,7 +26,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.4",
     "nodemailer": "^6.4.6",
-    "nodemon": "^2.0.2",
+    "random-avatar-generator": "^2.0.0",
     "socket.io": "^4.1.3"
   }
 }
