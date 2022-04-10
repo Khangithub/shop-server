@@ -1,7 +1,8 @@
 const router = require ('express').Router ({mergeParams: true});
-const {getChatList} = require ('../controllers/chat');
 const {auth} = require ('../middlewares/user');
 
-router.get ('/:roomId', auth, getChatList);
+const {getMsgList, getConversation} = require ('../controllers/chat');
 
+router.get ('/:roomId', auth, getMsgList);
+router.get ('/from/:fromId', auth, getConversation);
 module.exports = router;
