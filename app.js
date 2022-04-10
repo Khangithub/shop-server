@@ -55,17 +55,18 @@ io.on ('connection', socket => {
     console.log (`User with ID: ${socket.id} joined room: ${room}`);
   });
 
-  socket.on ('send_message', async ({room, msg, from, to, createdAt}) => {
+  socket.on ('send_message', async ({room, msg, from, to, product, createdAt}) => {
     const newMsg = new Chat ({
       _id: new mongoose.Types.ObjectId (),
       msg,
       from,
       to,
+      product,
       createdAt,
       room
     });
     await newMsg.save ();
-    socket.to (room).emit ('receive_message', {msg, from, to, createdAt});
+    socket.to (room).emit ('receive_message', {msg, from, to, createdAt, product});
   });
 
   socket.on ('disconnect', () => {

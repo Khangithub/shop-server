@@ -11,6 +11,11 @@ const chatSchema = Schema ({
     ref: 'User',
     require: true,
   },
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    require: true,
+  },
   msg: {
     type: String,
     required: true,
