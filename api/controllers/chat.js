@@ -11,7 +11,7 @@ const getMsgList = async (req, res) => {
 
 const getConversation = async (req, res) => {
   try {
-    const chatList = await Chat.find ({
+    const conversations = await Chat.find ({
       room: {$regex: req.params.fromId, $options: 'i'},
     })
       .populate ({path: 'from', select: '-__v'})
@@ -20,22 +20,26 @@ const getConversation = async (req, res) => {
       .exec ();
 
     var i = 0;
-    while (i < chatList.length - 1) {
+    while (i < conversations.length - 1) {
       if (
-        (chatList[i].to.toString () === chatList[i + 1].to.toString () &&
-          chatList[i].from.toString () === chatList[i + 1].from.toString ()) ||
-        (chatList[i].from.toString () === chatList[i + 1].to.toString () &&
-          chatList[i].from.toString () === chatList[i + 1].to.toString ())
+        (conversations[i].to.toString () === conversations[i + 1].to.toString () &&
+          conversations[i].from.toString () === conversations[i + 1].from.toString () &&
+          conversations[i].product.toString () ===
+            conversations[i + 1].product.toString ()) ||
+        (conversations[i].from.toString () === conversations[i + 1].to.toString () &&
+          conversations[i].from.toString () === conversations[i + 1].to.toString () &&
+          conversations[i].product.toString () ===
+            conversations[i + 1].product.toString ())
       ) {
-        chatList.splice (i, 1);
+        conversations.splice (i, 1);
       } else {
         ++i;
       }
     }
 
-    // chatList.shift ();
+    // conversations.shift ();
 
-    return res.status (200).json ({chatList});
+    return res.status (200).json ({conversations});
   } catch (err) {
     return res.status (500).json ({err});
   }
