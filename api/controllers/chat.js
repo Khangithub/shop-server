@@ -16,7 +16,7 @@ const getConversation = async (req, res) => {
     })
       .populate ({path: 'from', select: '-__v'})
       .populate ({path: 'to', select: '-__v'})
-      .populate ({path: 'product', select: '-__v'})
+      .populate ({path: 'product', select: '-__v -description'})
       .exec ();
 
     var i = 0;
@@ -33,7 +33,7 @@ const getConversation = async (req, res) => {
       }
     }
 
-    chatList.shift ();
+    // chatList.shift ();
 
     return res.status (200).json ({chatList});
   } catch (err) {
