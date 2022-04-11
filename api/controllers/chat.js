@@ -14,9 +14,22 @@ const getConversation = async (req, res) => {
     const conversations = await Chat.find ({
       room: {$regex: req.params.fromId, $options: 'i'},
     })
-      .populate ({path: 'from', select: '-__v -isActived -password -addressList -cardNumber -zipCode'})
-      .populate ({path: 'to', select: '-__v -isActived -password -addressList -cardNumber -zipCode'})
-      .populate ({path: 'product', select: '-__v -description -saler -createAt'})
+      .populate ({
+        path: 'from',
+        select: '-__v -isActived -password -addressList -cardNumber -zipCode',
+      })
+      .populate ({
+        path: 'to',
+        select: '-__v -isActived -password -addressList -cardNumber -zipCode',
+      })
+      .populate ({
+        path: 'product',
+        select: '-__v -description -createAt',
+        populate: {
+          path: 'saler',
+          select: '-__v -isActived -password -addressList -cardNumber -zipCode',
+        },
+      })
       .exec ();
 
     let i = 0;
