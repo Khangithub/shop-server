@@ -14,23 +14,14 @@ const getConversation = async (req, res) => {
     const conversations = await Chat.find ({
       room: {$regex: req.params.fromId, $options: 'i'},
     })
-      .populate ({path: 'from', select: '-__v'})
-      .populate ({path: 'to', select: '-__v'})
-      .populate ({path: 'product', select: '-__v -description'})
+      .populate ({path: 'from', select: '-__v -isActived -password -addressList -cardNumber -zipCode'})
+      .populate ({path: 'to', select: '-__v -isActived -password -addressList -cardNumber -zipCode'})
+      .populate ({path: 'product', select: '-__v -description -saler -createAt'})
       .exec ();
 
-    var i = 0;
+    let i = 0;
     while (i < conversations.length - 1) {
-      if (
-        (conversations[i].to.toString () === conversations[i + 1].to.toString () &&
-          conversations[i].from.toString () === conversations[i + 1].from.toString () &&
-          conversations[i].product.toString () ===
-            conversations[i + 1].product.toString ()) ||
-        (conversations[i].from.toString () === conversations[i + 1].to.toString () &&
-          conversations[i].from.toString () === conversations[i + 1].to.toString () &&
-          conversations[i].product.toString () ===
-            conversations[i + 1].product.toString ())
-      ) {
+      if (conversations[i].room === conversations[i + 1].room) {
         conversations.splice (i, 1);
       } else {
         ++i;

@@ -4,5 +4,5 @@ const {auth} = require ('../middlewares/user');
 const {getMsgList, getConversation} = require ('../controllers/chat');
 
 router.get ('/:roomId', auth, getMsgList);
-router.get ('/from/:fromId', auth, getConversation);
+router.get ('/from/:fromId', getConversation);
 module.exports = router;
