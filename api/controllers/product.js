@@ -195,6 +195,10 @@ const getNewArrivalProducts = async (req, res) => {
   } catch (err) {}
 };
 
+const backup = (req, res, next) => {
+  
+}
+
 module.exports = {
   getProducts,
   getProductsByCategory,
@@ -205,4 +209,5 @@ module.exports = {
   addProduct,
   editProduct,
   delProduct,
+  backup
 };
