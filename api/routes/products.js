@@ -10,8 +10,9 @@ const {
   editProduct,
   delProduct,
   getNewArrivalProducts,
+  backup,
 } = require ('../controllers/product');
-
+const {mediaUploader} = require ('../middlewares/multer');
 const {auth} = require ('../middlewares/user');
 
 router.get ('/:pageIndex/:limit', getProducts);
@@ -22,6 +23,7 @@ router.get ('/best/sale/:pageIndex/:limit', getBestSaleProducts);
 router.get ('/new/arrival/:pageIndex/:limit', getNewArrivalProducts);
 
 router.post ('/', auth, addProduct);
+router.post ('/test', mediaUploader.array ('product-media', 4), backup);
 
 router.patch ('/:productId', auth, editProduct);
 

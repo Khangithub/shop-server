@@ -1,4 +1,4 @@
 node_modules
-uploads
+media/*
 nodemon.json
 yarn.lock
