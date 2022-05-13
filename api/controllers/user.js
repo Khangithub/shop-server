@@ -82,6 +82,7 @@ const signInWithPwd = async (req, res) => {
           expiresIn: "1d",
         }
       );
+      user.password = null;
       req.currentUser = user;
       return res.status(200).json({ token, currentUser: user });
     }
@@ -104,6 +105,8 @@ const signInWithGg = async (req, res) => {
         expiresIn: "1d",
       }
     );
+
+    user.password = null;
     req.currentUser = user;
     return res.status(200).json({ token, currentUser: user });
   } catch (err) {
