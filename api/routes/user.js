@@ -10,8 +10,8 @@ const {
   delUser,
   getUsers,
   chgAvt,
-  changeUsername,
-  changePwd,
+  chgUsername,
+  chgPwd,
   resetAcc,
 } = require("../controllers/user");
 const { mediaUploader } = require("../middlewares/multer");
@@ -26,8 +26,8 @@ router.post("/login/google", signInWithGg);
 router.post("/reset/acc", resetAcc);
 
 router.patch("/me/avt", auth, mediaUploader.single("chg-avt"), chgAvt); // undone
-router.patch("/me/info", auth, changeUsername);
-router.patch("/me/pwd", auth, changePwd); // undone, send msg confirm thoughout phone
+router.patch("/me/info", auth, chgUsername);
+router.patch("/me/pwd", auth, chgPwd); // undone, send msg confirm thoughout phone
 
 router.delete("/:userId", auth, delUser); // undone, also remove all comments, products, message
 

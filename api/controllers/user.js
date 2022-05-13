@@ -134,7 +134,7 @@ const chgAvt = async (req, res) => {
   }
 };
 
-const changeUsername = async (req, res) => {
+const chgUsername = async (req, res) => {
   try {
     const doc = await User.findByIdAndUpdate(req.currentUser._id, {
       username: req.body.newUsername,
@@ -145,7 +145,7 @@ const changeUsername = async (req, res) => {
   }
 };
 
-const changePwd = async (req, res) => {
+const chgPwd = async (req, res) => {
   try {
     const { pwd, confirmedPwd } = req.body;
 
@@ -193,7 +193,7 @@ module.exports = {
   signInWithGg,
   delUser,
   chgAvt,
-  changeUsername,
-  changePwd,
+  chgUsername,
+  chgPwd,
   resetAcc,
 };

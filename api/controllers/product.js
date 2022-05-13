@@ -3,7 +3,7 @@ const Product = require ('../models/product');
 const LIMIT = 6;
 const PAGE_INDEX = 1;
 
-const getProducts = async (req, res) => {
+const getProds = async (req, res) => {
   try {
     const pageIndex = req.params.pageIndex
       ? parseInt (req.params.pageIndex)
@@ -28,7 +28,7 @@ const getProducts = async (req, res) => {
   }
 };
 
-const getProductsByCategory = async (req, res) => {
+const getProdsByCategory = async (req, res) => {
   try {
     const {category} = req.params;
     const pageIndex = req.params.pageIndex
@@ -51,7 +51,7 @@ const getProductsByCategory = async (req, res) => {
   }
 };
 
-const addProduct = async (req, res) => {
+const addProd = async (req, res) => {
   try {
     const {currentUser} = req;
     const newProduct = new Product ({
@@ -74,7 +74,7 @@ const addProduct = async (req, res) => {
   }
 };
 
-const getProduct = async (req, res) => {
+const getProd = async (req, res) => {
   const id = req.params.productId;
 
   await Product.findById (id)
@@ -97,14 +97,14 @@ const getProduct = async (req, res) => {
     });
 };
 
-const editProduct = (req, res) => {
+const editProd = (req, res) => {
   const {productId} = req.params;
-  const editProduct = req.body;
-  Product.findByIdAndUpdate (productId, editProduct)
+  const editProd = req.body;
+  Product.findByIdAndUpdate (productId, editProd)
     .exec ()
     .then (doc => {
       res.status (200).json ({
-        message: JSON.stringify (editProduct),
+        message: JSON.stringify (editProd),
         doc,
       });
     })
@@ -115,7 +115,7 @@ const editProduct = (req, res) => {
     });
 };
 
-const delProduct = async (req, res) => {
+const delProd = async (req, res) => {
   Product.findByIdAndDelete (req.params.productId)
     .then (doc => {
       return res.status (200).send ({
@@ -128,7 +128,7 @@ const delProduct = async (req, res) => {
     });
 };
 
-const getMostDiscountsProducts = async (req, res) => {
+const getMostDiscntsProds = async (req, res) => {
   try {
     const pageIndex = req.params.pageIndex
       ? parseInt (req.params.pageIndex)
@@ -151,7 +151,7 @@ const getMostDiscountsProducts = async (req, res) => {
   }
 };
 
-const getBestSaleProducts = async (req, res) => {
+const getBestSaleProds = async (req, res) => {
   try {
     const pageIndex = req.params.pageIndex
       ? parseInt (req.params.pageIndex)
@@ -174,7 +174,7 @@ const getBestSaleProducts = async (req, res) => {
   }
 };
 
-const getNewArrivalProducts = async (req, res) => {
+const getNewArrivalProds = async (req, res) => {
   try {
     const pageIndex = req.params.pageIndex
       ? parseInt (req.params.pageIndex)
@@ -195,19 +195,14 @@ const getNewArrivalProducts = async (req, res) => {
   } catch (err) {}
 };
 
-const backup = (req, res, next) => {
-  
-}
-
 module.exports = {
-  getProducts,
-  getProductsByCategory,
-  getMostDiscountsProducts,
-  getBestSaleProducts,
-  getNewArrivalProducts,
-  getProduct,
-  addProduct,
-  editProduct,
-  delProduct,
-  backup
+  getProds,
+  getProdsByCategory,
+  getMostDiscntsProds,
+  getBestSaleProds,
+  getNewArrivalProds,
+  getProd,
+  addProd,
+  editProd,
+  delProd
 };
