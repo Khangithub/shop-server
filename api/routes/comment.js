@@ -17,18 +17,18 @@ router.get ('/of/product/:productId/:batch/:limit', getProductCmts);
 router.get ('/:commentId', getCmt);
 router.get ('/media/:filename', getCmtMedia);
 
-router.post ('/', auth, mediaUploader.array ('cmt-media', 4), addCmt);
+router.post ('/', auth, mediaUploader.array ('cmt-media', 10), addCmt);
 router.post (
   '/reply/:commentId',
   auth,
-  mediaUploader.array ('rep-media', 4),
+  mediaUploader.array ('rep-media', 10),
   repCmt
 );
 
 router.patch (
   '/:commentId',
   auth,
-  mediaUploader.array ('edit-cmt-media', 4),
+  mediaUploader.array ('edit-cmt-media', 10),
   editCmt
 );
 router.patch ('/sub/comment/:commentId', auth, editRep); // undone
