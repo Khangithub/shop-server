@@ -10,6 +10,7 @@ const {
   editProd,
   delProd,
   getNewArrivalProds,
+  getProdsOfSaleman,
 } = require ('../controllers/product');
 const {auth} = require ('../middlewares/user');
 
@@ -19,6 +20,7 @@ router.get ('/type/:category/:pageIndex/:limit', getProdsByCategory);
 router.get ('/most/discounts/:pageIndex/:limit', getMostDiscntsProds);
 router.get ('/best/sale/:pageIndex/:limit', getBestSaleProds);
 router.get ('/new/arrival/:pageIndex/:limit', getNewArrivalProds);
+router.get('/of/saleman/:salemanId/:pageIndex/:limit', getProdsOfSaleman);
 
 router.post ('/', auth, addProd);
 
