@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
-exports.auth = async (req, res, next) => {
+const auth = async (req, res, next) => {
   try {
     let token = req.headers.authorization.split(" ")[1];
     let { data } = jwt.verify(token, process.env.JWT_KEY);
@@ -21,3 +21,13 @@ exports.auth = async (req, res, next) => {
     return res.status(500).json({ err });
   }
 };
+
+const isSaleman = async (req, res, next) => {
+  if (req.currentUser.role === "saler") {
+    next();
+  } else {
+    return res.status(401).json({ message: "this user is not a saleman" });
+  }
+};
+
+module.exports = { auth, isSaleman };

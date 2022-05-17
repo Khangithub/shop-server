@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Product = require("../models/product");
+const { uploadFile } = require("../middlewares/firebase");
 const LIMIT = 6;
 const PAGE_INDEX = 1;
 
@@ -106,7 +107,7 @@ const getProdsOfSaleman = async (req, res) => {
     const skip = (pageIndex - 1) * limit;
 
     const docs = await Product.find({
-      saler: req.params.salemanId
+      saler: req.params.salemanId,
     })
       .populate("saler")
       .skip(skip)
@@ -121,22 +122,24 @@ const getProdsOfSaleman = async (req, res) => {
   }
 };
 
-const editProd = (req, res) => {
-  const { productId } = req.params;
-  const editProd = req.body;
-  Product.findByIdAndUpdate(productId, editProd)
-    .exec()
-    .then((doc) => {
-      res.status(200).json({
-        message: JSON.stringify(editProd),
-        doc,
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        error: error,
-      });
+const editProdMedia = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const mediaList = await Promise.all(
+      req.files.map((file) => uploadFile(file, "shop-prod"))
+    );
+
+    await Product.findByIdAndUpdate(productId, { $push: { mediaList } }).exec();
+
+    return res.status(200).json({
+      mediaList,
+      updated: true,
     });
+  } catch (err) {
+    return res.status(500).json({
+      err,
+    });
+  }
 };
 
 const delProd = async (req, res) => {
@@ -227,7 +230,7 @@ module.exports = {
   getNewArrivalProds,
   getProd,
   addProd,
-  editProd,
+  editProdMedia,
   delProd,
-  getProdsOfSaleman
+  getProdsOfSaleman,
 };
