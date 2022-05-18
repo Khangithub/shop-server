@@ -71,12 +71,6 @@ const productSchema = Schema({
     type: Date,
     required: true,
   },
-  mediaList: [
-    {
-      filename: { type: String },
-      mimetype: { type: String },
-    },
-  ],
   fields: [
     {
       type: String,
@@ -90,7 +84,8 @@ const productSchema = Schema({
       },
       data: [
         {
-          mediaUrl: String,
+          filename: String,
+          mimetype: String,
           price: Number,
           nameProp: String,
         },
