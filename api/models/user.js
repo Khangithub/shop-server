@@ -69,6 +69,12 @@ const userSchema = Schema ({
       },
     },
   ],
+  mediaList: [
+    {
+      filename: {type: String},
+      mimetype: {type: String},
+    },
+  ],
 });
 
 module.exports = model ('User', userSchema);

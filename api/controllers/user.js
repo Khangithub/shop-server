@@ -187,6 +187,23 @@ const resetAcc = async (req, res) => {
   }
 };
 
+const uploadMedia = async (req, res) => {
+  try {
+    const mediaList = await Promise.all(
+      req.files.map((file) => uploadFile(file, "user-media"))
+    );
+
+    await User.findByIdAndUpdate(req.currentUser._id, {
+      $push: {
+        mediaList,
+      },
+    }).exec();
+
+    return res.status(200).json({ mediaList, updated: true });
+  } catch (err) {
+    return res.status(500).json({ err });
+  }
+};
 module.exports = {
   getUsers,
   signUp,
@@ -199,4 +216,5 @@ module.exports = {
   chgUsername,
   chgPwd,
   resetAcc,
+  uploadMedia,
 };

@@ -13,6 +13,7 @@ const {
   chgUsername,
   chgPwd,
   resetAcc,
+  uploadMedia
 } = require("../controllers/user");
 const { mediaUploader } = require("../middlewares/multer");
 
@@ -24,7 +25,7 @@ router.post("/signup", signUp);
 router.post("/login/pwd", signInWithPwd);
 router.post("/login/google", signInWithGg);
 router.post("/reset/acc", resetAcc);
-
+router.post("/media", auth, mediaUploader.array("user-media", 10), uploadMedia);
 router.patch("/me/avt", auth, mediaUploader.single("chg-avt"), chgAvt); // undone
 router.patch("/me/info", auth, chgUsername);
 router.patch("/me/pwd", auth, chgPwd); // undone, send msg confirm thoughout phone
