@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
           });
 
           await newConversation.save();
-          socket.to(room).emit("receive_message", {
+          socket.in(room).emit("receive_message", {
             room,
             product,
             content,
@@ -96,6 +96,14 @@ io.on("connection", (socket) => {
               },
             }
           );
+          io.sockets.emit("receive_message", {
+            room,
+            product,
+            content,
+            from,
+            type,
+            createdAt,
+          });
         }
       } catch (err) {
         socket.to(room).emit("err_message", {
