@@ -1,6 +1,6 @@
 const Chat = require("../models/chat");
 
-const getMsgList = async (req, res) => {
+const getChatList = async (req, res) => {
   try {
     const data = await Chat.findOne({ room: req.params.roomId })
       .select("chatList")
@@ -19,5 +19,5 @@ const getMsgList = async (req, res) => {
 };
 
 module.exports = {
-  getMsgList,
+  getChatList,
 };
