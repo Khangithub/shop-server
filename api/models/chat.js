@@ -10,6 +10,14 @@ const chatSchema = Schema({
     ref: "Product",
     require: true,
   },
+  buyer: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    require: true,
+  },
+  updatedAt: {
+    type: String,
+  },
   messages: [
     {
       from: {
@@ -24,8 +32,8 @@ const chatSchema = Schema({
       },
       type: {
         type: String,
-        enum: ['text', 'media'],
-        default: 'text'
+        enum: ["text", "media"],
+        default: "text",
       },
       mediaList: [
         {
