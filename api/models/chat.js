@@ -10,7 +10,7 @@ const chatSchema = Schema({
     ref: "Product",
     require: true,
   },
-  chatList: [
+  messages: [
     {
       from: {
         type: Schema.Types.ObjectId,

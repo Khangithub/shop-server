@@ -65,7 +65,7 @@ io.on("connection", (socket) => {
             _id: new mongoose.Types.ObjectId(),
             product,
             room,
-            chatList: {
+            messages: {
               content,
               from,
               createdAt,
@@ -87,7 +87,7 @@ io.on("connection", (socket) => {
             { room, product },
             {
               $push: {
-                chatList: {
+                messages: {
                   content,
                   from,
                   createdAt,

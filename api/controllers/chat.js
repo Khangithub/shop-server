@@ -1,23 +1,23 @@
 const Chat = require("../models/chat");
 
-const getChatList = async (req, res) => {
+const getMsgList = async (req, res) => {
   try {
     const data = await Chat.findOne({ room: req.params.roomId })
-      .select("chatList")
+      .select("messages")
       .populate({
-        path: "chatList.from",
+        path: "messages.from",
         select: "_id username avatar",
       })
       .exec();
 
-    const chatList = data === null ? [] : data.chatList;
+    const msgs = data === null ? [] : data.messages;
 
-    return res.status(200).json({ chatList });
+    return res.status(200).json({ msgs });
   } catch (err) {
     return res.status(500).json({ err });
   }
 };
 
 module.exports = {
-  getChatList,
+  getMsgList,
 };

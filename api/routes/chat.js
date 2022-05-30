@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const {auth} = require ('../middlewares/user');
 
-const { getChatList } = require("../controllers/chat");
+const { getMsgList } = require("../controllers/chat");
 
-router.get("/:roomId", auth, getChatList);
+router.get("/:roomId", auth, getMsgList);
 module.exports = router;
