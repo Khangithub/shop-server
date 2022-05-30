@@ -174,12 +174,8 @@ const resetAcc = async (req, res) => {
   try {
     const { email } = req.body;
     const defaultPwd = await bcrypt.hash(process.env.DEFAULT_PASSWORD, 10);
-    const doc = await User.updateOne(
-      { email },
-      { password: defaultPwd }
-    ).exec();
+    await User.updateOne({ email }, { password: defaultPwd }).exec();
     return res.status(200).json({
-      doc,
       message: `password has been reset to ${process.env.DEFAULT_PASSWORD}`,
     });
   } catch (err) {
