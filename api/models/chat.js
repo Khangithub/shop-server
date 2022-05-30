@@ -13,7 +13,6 @@ const chatSchema = Schema({
   buyer: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    require: true,
   },
   updatedAt: {
     type: String,

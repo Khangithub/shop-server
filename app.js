@@ -88,8 +88,8 @@ io.on("connection", (socket) => {
           await Chat.updateOne(
             { room, product },
             {
+              updatedAt: createdAt,
               $push: {
-                updatedAt: createdAt,
                 messages: {
                   content,
                   from,
