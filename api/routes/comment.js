@@ -1,6 +1,6 @@
 const router = require ('express').Router ({mergeParams: true});
 const {
-  getProductCmts,
+  getCmts,
   getCmt,
   getCmtMedia,
   addCmt,
@@ -13,7 +13,7 @@ const {
 const {mediaUploader} = require ('../middlewares/multer');
 const {auth} = require ('../middlewares/user');
 
-router.get ('/of/product/:productId/:batch/:limit', getProductCmts);
+router.get ('/of/product/:productId/:batch/:limit', getCmts);
 router.get ('/:commentId', getCmt);
 router.get ('/media/:filename', getCmtMedia);
 

@@ -30,7 +30,7 @@ const addCmt = async (req, res) => {
   }
 };
 
-const getProductCmts = async (req, res) => {
+const getCmts = async (req, res) => {
   try {
     const {productId} = req.params;
     const pageIndex = req.params.pageIndex
@@ -206,7 +206,7 @@ const delRep = async (req, res) => {
 
 module.exports = {
   addCmt,
-  getProductCmts,
+  getCmts,
   editCmt,
   getCmt,
   delCmt,

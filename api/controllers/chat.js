@@ -1,6 +1,6 @@
 const Chat = require("../models/chat");
 
-const getMsgList = async (req, res) => {
+const getMsgs = async (req, res) => {
   try {
     const data = await Chat.findOne({ room: req.params.roomId })
       .select("messages")
@@ -18,7 +18,7 @@ const getMsgList = async (req, res) => {
   }
 };
 
-const getChatList = async (req, res) => {
+const getChats = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -26,7 +26,6 @@ const getChatList = async (req, res) => {
       { buyer: userId },
       { messages: { $slice: -1 } }
     )
-      .select("messages")
       .populate({
         path: "product",
         select: "_id name productImage saler",
@@ -47,6 +46,6 @@ const getChatList = async (req, res) => {
 };
 
 module.exports = {
-  getMsgList,
-  getChatList,
+  getMsgs,
+  getChats,
 };
