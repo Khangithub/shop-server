@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
           });
 
           await newConversation.save();
-          socket.in(room).emit("receive_message", {
+          io.sockets.emit("receive_message", {
             room,
             product,
             content,
