@@ -1,7 +1,9 @@
 const router = require("express").Router();
-const {auth} = require ('../middlewares/user');
+const { auth, isClient } = require("../middlewares/user");
 
-const { getMsgList } = require("../controllers/chat");
+const { getMsgList, getChatList } = require("../controllers/chat");
 
 router.get("/:roomId", auth, getMsgList);
+router.get("/of/buyer/:userId", auth, isClient, getChatList);
+
 module.exports = router;

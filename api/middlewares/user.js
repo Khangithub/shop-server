@@ -8,6 +8,7 @@ const auth = async (req, res, next) => {
     let myId = JSON.parse(data);
 
     const user = await User.findById(myId).select("-__v -password").exec();
+
     if (user) {
       req.currentUser = user;
       console.log("auth done", user.username);
@@ -30,4 +31,11 @@ const isSaleman = async (req, res, next) => {
   }
 };
 
-module.exports = { auth, isSaleman };
+const isClient = async (req, res, next) => {
+  if (req.currentUser.role === "client") {
+    next();
+  } else {
+    return res.status(402).json({ message: "this user is not a client" });
+  }
+};
+module.exports = { auth, isSaleman, isClient };
