@@ -57,19 +57,30 @@ io.on("connection", (socket) => {
 
   socket.on(
     "send_message",
-    async ({ room, product, content, from, type, createdAt }) => {
+    async ({
+      room,
+      productId,
+      productImage,
+      productName,
+      salerId,
+      salerUsername,
+      content,
+      fromId,
+      type,
+      createdAt,
+    }) => {
       try {
         const doseConversationExist = await Chat.exists({ room });
         if (!doseConversationExist) {
           const newConversation = new Chat({
             _id: new mongoose.Types.ObjectId(),
-            product,
+            product: productId,
             room,
-            buyer: from,
+            buyer: fromId,
             updatedAt: createdAt,
             messages: {
               content,
-              from,
+              from: fromId,
               createdAt,
               type,
             },
@@ -77,22 +88,27 @@ io.on("connection", (socket) => {
 
           await newConversation.save();
           io.sockets.emit("receive_message", {
+            isNewChat: true,
             room,
-            product,
+            productId,
+            productImage,
+            productName,
+            salerId,
+            salerUsername,
             content,
-            from,
+            fromId,
             type,
             createdAt,
           });
         } else {
           await Chat.updateOne(
-            { room, product },
+            { room, product: productId },
             {
               updatedAt: createdAt,
               $push: {
                 messages: {
                   content,
-                  from,
+                  from: fromId,
                   createdAt,
                   type,
                 },
@@ -100,10 +116,15 @@ io.on("connection", (socket) => {
             }
           );
           io.sockets.emit("receive_message", {
+            isNewChat: false,
             room,
-            product,
+            productId,
+            productImage,
+            productName,
+            salerId,
+            salerUsername,
             content,
-            from,
+            fromId,
             type,
             createdAt,
           });

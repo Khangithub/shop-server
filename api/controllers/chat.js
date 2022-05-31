@@ -31,12 +31,12 @@ const getChats = async (req, res) => {
         select: "_id name productImage saler",
         populate: {
           path: "saler",
-          select: "_id username avatar",
+          select: "_id username",
         },
       })
       .populate({
         path: "messages.from",
-        select: "_id username avatar",
+        select: "_id username",
       })
       .sort({ updatedAt: "desc" })
       .exec();
