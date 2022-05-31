@@ -15,7 +15,7 @@ const chatSchema = Schema({
     ref: "User",
   },
   updatedAt: {
-    type: String,
+    type: Date,
   },
   messages: [
     {
@@ -27,7 +27,7 @@ const chatSchema = Schema({
         type: String,
       },
       createdAt: {
-        type: String,
+        type: Date,
       },
       type: {
         type: String,

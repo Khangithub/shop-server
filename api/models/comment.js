@@ -1,16 +1,14 @@
-const {Schema, model} = require ('mongoose');
-const moment = require ('moment-timezone');
-const dateVietNam = moment.tz (Date.now (), 'Asia/Ho_Chi_Minh');
+const { Schema, model } = require("mongoose");
 
-const commentSchema = Schema ({
+const commentSchema = Schema({
   product: {
     type: Schema.Types.ObjectId,
-    ref: 'Product',
+    ref: "Product",
     required: true,
   },
   commentator: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     require: true,
   },
   mainComment: {
@@ -18,7 +16,6 @@ const commentSchema = Schema ({
   },
   published: {
     type: Date,
-    default: dateVietNam,
   },
   edited: {
     type: Boolean,
@@ -29,33 +26,32 @@ const commentSchema = Schema ({
     {
       sender: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
       },
       content: {
         type: String,
       },
       receiver: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
       },
       published: {
         type: Date,
-        default: dateVietNam,
       },
       mediaList: [
         {
-          filename: {type: String},
-          mimetype: {type: String},
+          filename: { type: String },
+          mimetype: { type: String },
         },
       ],
     },
   ],
   mediaList: [
     {
-      filename: {type: String},
-      mimetype: {type: String},
+      filename: { type: String },
+      mimetype: { type: String },
     },
   ],
 });
 
-module.exports = model ('Comment', commentSchema);
+module.exports = model("Comment", commentSchema);

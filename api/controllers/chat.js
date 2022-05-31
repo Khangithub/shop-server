@@ -38,6 +38,7 @@ const getChats = async (req, res) => {
         path: "messages.from",
         select: "_id username avatar",
       })
+      .sort({ updatedAt: "desc" })
       .exec();
     return res.status(200).json({ chats });
   } catch (err) {
