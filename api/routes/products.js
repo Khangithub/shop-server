@@ -13,7 +13,7 @@ const {
   getProdsOfSaleman,
 } = require("../controllers/product");
 const { mediaUploader } = require("../middlewares/multer");
-const { auth, isSaleman } = require("../middlewares/user");
+const { auth, checkRole } = require("../middlewares/user");
 
 router.get("/:pageIndex/:limit", getProds);
 router.get("/:productId", getProd);
@@ -28,7 +28,7 @@ router.post("/", auth, addProd);
 router.patch(
   "/saleman/prod/media/:productId",
   auth,
-  isSaleman,
+  checkRole("saler"),
   mediaUploader.array("shop-prod", 10),
   editProdMedia
 );

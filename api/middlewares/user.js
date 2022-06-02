@@ -23,19 +23,14 @@ const auth = async (req, res, next) => {
   }
 };
 
-const isSaleman = async (req, res, next) => {
-  if (req.currentUser.role === "saler") {
-    next();
-  } else {
-    return res.status(401).json({ message: "this user is not a saleman" });
-  }
+const checkRole = (role) => {
+  return async (req, res, next) => {
+    if (req.currentUser.role === role) {
+      next();
+    } else {
+      return res.status(402).json({ message: `this user is not a ${role}` });
+    }
+  };
 };
 
-const isClient = async (req, res, next) => {
-  if (req.currentUser.role === "client") {
-    next();
-  } else {
-    return res.status(402).json({ message: "this user is not a client" });
-  }
-};
-module.exports = { auth, isSaleman, isClient };
+module.exports = { auth, checkRole };

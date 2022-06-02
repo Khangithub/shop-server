@@ -38,6 +38,10 @@ const getBuyerChats = async (req, res) => {
         path: "messages.from",
         select: "_id username",
       })
+      .populate({
+        path: "buyer",
+        select: "_id username avatar",
+      })
       .sort({ updatedAt: "desc" })
       .exec();
     return res.status(200).json({ chats });
@@ -64,6 +68,10 @@ const getSalemanChats = async (req, res) => {
       .populate({
         path: "messages.from",
         select: "_id username",
+      })
+      .populate({
+        path: "buyer",
+        select: "_id username avatar",
       })
       .sort({ updatedAt: "desc" })
       .exec();

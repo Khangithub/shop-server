@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { auth, isClient, isSaleman } = require("../middlewares/user");
+const { auth, checkRole } = require("../middlewares/user");
 const {
   getMsgs,
   getBuyerChats,
@@ -7,7 +7,7 @@ const {
 } = require("../controllers/chat");
 
 router.get("/:roomId", auth, getMsgs);
-router.get("/of/buyer/:userId", auth, isClient, getBuyerChats);
-router.get("/of/saleman/:userId", auth, isSaleman, getSalemanChats);
+router.get("/of/buyer/:userId", auth, checkRole("client"), getBuyerChats);
+router.get("/of/saleman/:userId", auth, checkRole("saler"), getSalemanChats);
 
 module.exports = router;
