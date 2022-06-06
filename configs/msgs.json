@@ -1,0 +1,8 @@
+{
+  "USER_NOT_EXIST_MSG": "user doese not exist",
+  "WRONG_PWD_MSG": "wrong password",
+  "USER_DELETED_MSG": "user was deleted",
+  "USERNAME_CHANGED_MSG": "username was changed",
+  "PWDS_NOT_MATCH_MSG": "passwords are not matched",
+  "PWD_CHANGED": "password changed"
+}

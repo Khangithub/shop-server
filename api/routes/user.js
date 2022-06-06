@@ -2,8 +2,8 @@ const router = require("express").Router({ mergeParams: true });
 const { auth } = require("../middlewares/user");
 
 const {
-  signInWithPwd,
-  signInWithGg,
+  lgPwd,
+  lgGg,
   signUp,
   getCurrentUser,
   getUser,
@@ -22,8 +22,8 @@ router.get("/me", auth, getCurrentUser);
 router.get("/:userId", getUser); // undone, admin auth
 
 router.post("/signup", signUp);
-router.post("/login/pwd", signInWithPwd);
-router.post("/login/google", signInWithGg);
+router.post("/login/pwd", lgPwd);
+router.post("/login/google", lgGg);
 router.post("/reset/acc", resetAcc);
 router.post("/media", auth, mediaUploader.array("user-media", 10), uploadMedia);
 router.patch("/me/avt", auth, mediaUploader.single("chg-avt"), chgAvt); // undone

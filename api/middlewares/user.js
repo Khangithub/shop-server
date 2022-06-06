@@ -4,7 +4,7 @@ const User = require("../models/user");
 const auth = async (req, res, next) => {
   try {
     let token = req.headers.authorization.split(" ")[1];
-    let { data } = jwt.verify(token, process.env.JWT_KEY);
+    let { data } = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
     let myId = JSON.parse(data);
 
     const user = await User.findById(myId).select("-__v -password").exec();
