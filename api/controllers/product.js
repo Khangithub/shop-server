@@ -142,6 +142,24 @@ const editProdMedia = async (req, res) => {
   }
 };
 
+const editProd = async (req, res) => {
+  try {
+    const { prod } = req.body;
+    const doc = await Product.updateOne(
+      { _id: prod._id },
+      {
+        $set: prod,
+      }
+    );
+
+    if (doc.ok) {
+      return res.status(200).json({ updated: true });
+    }
+  } catch (err) {
+    return res.status(500).json({ err });
+  }
+};
+
 const delProd = async (req, res) => {
   Product.findByIdAndDelete(req.params.productId)
     .then((doc) => {
@@ -231,6 +249,7 @@ module.exports = {
   getProd,
   addProd,
   editProdMedia,
+  editProd,
   delProd,
   getProdsOfSaleman,
 };

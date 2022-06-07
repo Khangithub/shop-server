@@ -77,21 +77,10 @@ const productSchema = Schema({
       required: true,
     },
   ],
-  variants: [
-    {
-      prop: {
-        type: String,
-      },
-      data: [
-        {
-          filename: String,
-          mimetype: String,
-          price: Number,
-          nameProp: String,
-        },
-      ],
-    },
-  ],
+  variants: {
+    type: Schema.Types.Mixed,
+  },
+
   slugs: [
     {
       type: String,

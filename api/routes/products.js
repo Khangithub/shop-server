@@ -11,6 +11,7 @@ const {
   delProd,
   getNewArrivalProds,
   getProdsOfSaleman,
+  editProd,
 } = require("../controllers/product");
 const { mediaUploader } = require("../middlewares/multer");
 const { auth, checkRole } = require("../middlewares/user");
@@ -32,6 +33,7 @@ router.patch(
   mediaUploader.array("shop-prod", 10),
   editProdMedia
 );
+router.patch("/edit", auth, checkRole("saler"), editProd);
 
 router.delete("/:productId", auth, delProd);
 
